@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 
-import { CreatePost } from "~/app/_components/create-post";
-import { api } from "./_utils/trpc";
+import { CreatePost } from "~/components/create-post";
+import { api } from "~/utils/trpc";
 
 export default function Home() {
   const { data: hello } = api.post.hello.useQuery({ text: "world" });

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { api } from "../_utils/trpc";
+import { api } from "~/utils/trpc";
 
 export function CreatePost() {
   const router = useRouter();
