@@ -1,10 +1,12 @@
+"use client";
+
 import Link from "next/link";
 
 import { CreatePost } from "~/app/_components/create-post";
-import { api } from "~/trpc/server";
+import { api } from "./_utils/trpc";
 
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+export default function Home() {
+  const { data: hello } = api.post.hello.useQuery({ text: "world" });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -48,8 +50,8 @@ export default async function Home() {
   );
 }
 
-async function CrudShowcase() {
-  const latestPost = await api.post.getLatest();
+function CrudShowcase() {
+  const { data: latestPost } = api.post.getLatest.useQuery();
 
   return (
     <div className="w-full max-w-xs">
