@@ -5,6 +5,8 @@ import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "~/utils/trpc";
 // import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, NavigationMenuTrigger } from "~/components/ui/navigation-menu"; // Import Navigation components
 import { Nav } from "~/components/navbar";
+import { DynamicProvider } from "~/components/dynamic-provider";
+import { SafeAccountProvider } from "~/components/safe-account-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,7 +29,9 @@ export default function RootLayout({
       <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider>
           <Nav />
-          {children}
+          <DynamicProvider>
+            <SafeAccountProvider>{children}</SafeAccountProvider>
+          </DynamicProvider>
         </TRPCReactProvider>
       </body>
     </html>
