@@ -7,9 +7,10 @@ import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import { DynamicContextProvider } from "@dynamic-labs/sdk-react-core";
 import { DynamicWagmiConnector } from "@dynamic-labs/wagmi-connector";
 import { env } from "~/env";
+import { supportedNetworks } from "~/utils/networks";
 
 const wagmiConfig = createConfig({
-  chains: [baseSepolia],
+  chains: supportedNetworks,
   multiInjectedProviderDiscovery: false,
   transports: {
     [baseSepolia.id]: http(env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL),

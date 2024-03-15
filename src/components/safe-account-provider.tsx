@@ -14,7 +14,9 @@ import { createPimlicoPaymasterClient } from "permissionless/clients/pimlico";
 import { createContext, useContext, useEffect, useState } from "react";
 import { createClient, http } from "viem";
 import { usePublicClient, useWalletClient } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { baseSepolia, sepolia } from "wagmi/chains";
+import { env } from "~/env";
+import { type SupportedNetworkId, supportedNetworks } from "~/utils/networks";
 
 type SafeAccountClient = SmartAccountClient<typeof ENTRYPOINT_ADDRESS_V06>;
 
@@ -23,6 +25,10 @@ const SafeAccountContext = createContext<SafeAccountClient | null>(null);
 export function useSafeAccountClient() {
   return useContext(SafeAccountContext);
 }
+
+const pimlicoNetworkNames: Record<SupportedNetworkId, string> = {
+  [baseSepolia.id]: "base-sepolia",
+};
 
 export function SafeAccountProvider({
   children,
@@ -39,16 +45,23 @@ export function SafeAccountProvider({
       return;
     }
 
-    const paymasterClient = createPimlicoPaymasterClient({
-      transport: http(
-        "https://api.pimlico.io/v2/sepolia/rpc?apikey=f0cdb431-084f-4d16-b951-bcb144e715c3",
-      ),
-      entryPoint: ENTRYPOINT_ADDRESS_V06,
-    });
+    const networkId = walletClient.chain.id;
+    const network = supportedNetworks.find((n) => n.id === networkId);
+
+    if (!network) {
+      throw new Error(`Unsupported network: ${networkId}`);
+    }
 
     const bundlerTransport = http(
-      "https://api.pimlico.io/v2/sepolia/rpc?apikey=YOUR_API_KEY_HERE",
+      `https://api.pimlico.io/v2/${pimlicoNetworkNames[network.id]}/rpc?apikey=${
+        env.NEXT_PUBLIC_PIMLICO_API_KEY
+      }`,
     );
+
+    const paymasterClient = createPimlicoPaymasterClient({
+      transport: bundlerTransport,
+      entryPoint: ENTRYPOINT_ADDRESS_V06,
+    });
 
     const pimlicoBundlerClient = createClient({
       chain: sepolia,

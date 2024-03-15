@@ -4,10 +4,12 @@ import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import Link from "next/link";
 
 import { CreatePost } from "~/components/create-post";
+import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { api } from "~/utils/trpc";
 
 export default function Home() {
   const { data: hello } = api.post.hello.useQuery({ text: "world" });
+  const safeAccountClient = useSafeAccountClient();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
@@ -44,6 +46,7 @@ export default function Home() {
             {hello ? hello.greeting : "Loading tRPC query..."}
           </p>
         </div>
+        <div>Safe account client: {safeAccountClient?.name}</div>
         <DynamicWidget />
         <CrudShowcase />
       </div>
