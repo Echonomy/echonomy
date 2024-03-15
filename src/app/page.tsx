@@ -46,7 +46,7 @@ export default function Home() {
             {hello ? hello.greeting : "Loading tRPC query..."}
           </p>
         </div>
-        <div>Safe account client: {safeAccountClient?.name}</div>
+        <div>Safe account client: {safeAccountClient?.account?.address}</div>
         <DynamicWidget />
         <CrudShowcase />
       </div>
