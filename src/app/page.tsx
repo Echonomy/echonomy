@@ -1,5 +1,6 @@
 "use client";
 
+import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import Link from "next/link";
 
 import { CreatePost } from "~/components/create-post";
@@ -43,7 +44,7 @@ export default function Home() {
             {hello ? hello.greeting : "Loading tRPC query..."}
           </p>
         </div>
-
+        <DynamicWidget />
         <CrudShowcase />
       </div>
     </main>
