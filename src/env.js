@@ -35,7 +35,8 @@ export const env = createEnv({
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL: process.env.NEXT_PUBLIC_ETH_RPC_URL,
+    NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL:
+      process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL,
     NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID:
       process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID,
   },
