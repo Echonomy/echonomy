@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/utils/trpc";
 import { DynamicProvider } from "~/components/dynamic-provider";
+import { SafeAccountProvider } from "~/components/safe-account-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +26,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider>
-          <DynamicProvider>{children}</DynamicProvider>
+          <DynamicProvider>
+            <SafeAccountProvider>{children}</SafeAccountProvider>
+          </DynamicProvider>
         </TRPCReactProvider>
       </body>
     </html>
