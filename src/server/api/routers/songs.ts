@@ -15,18 +15,16 @@ import sharp from "sharp";
 import { callFFmpeg } from "~/server/ffmpeg";
 import { uploadToLighthouse } from "~/server/lighthouse";
 import { db } from "~/server/db";
+import { selectSongMeta } from "~/server/select";
+import { mapSongMetaToDto } from "~/server/mappers";
 
 export const songsRouter = createTRPCRouter({
   list: procedure.public.query(() => {
-    return db.song.findMany().then((songs) =>
-      songs.map((song) => ({
-        ...song,
-        artwork: "https://gateway.lighthouse.storage/ipfs/" + song.artwork,
-        previewSong:
-          "https://gateway.lighthouse.storage/ipfs/" + song.previewSong,
-        fullSong: "https://gateway.lighthouse.storage/ipfs/" + song.fullSong,
-      })),
-    );
+    return db.song
+      .findMany({
+        select: selectSongMeta,
+      })
+      .then((songs) => songs.map(mapSongMetaToDto));
   }),
 
   listByArtist: procedure.public
@@ -38,20 +36,12 @@ export const songsRouter = createTRPCRouter({
     .query(({ input }) => {
       return db.song
         .findMany({
+          select: selectSongMeta,
           where: {
             artistWalletAddress: input.artistWalletAddress,
           },
         })
-        .then((songs) =>
-          songs.map((song) => ({
-            ...song,
-            artwork: "https://gateway.lighthouse.storage/ipfs/" + song.artwork,
-            previewSong:
-              "https://gateway.lighthouse.storage/ipfs/" + song.previewSong,
-            fullSong:
-              "https://gateway.lighthouse.storage/ipfs/" + song.fullSong,
-          })),
-        );
+        .then((songs) => songs.map(mapSongMetaToDto));
     }),
 
   register: procedure.private
