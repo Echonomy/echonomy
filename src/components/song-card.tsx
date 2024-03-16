@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { PlayIcon } from "@radix-ui/react-icons";
 import Tilt from "react-parallax-tilt";
+import { formatEther } from 'viem'
 
 export function SongCard({
   songName,
@@ -42,8 +43,8 @@ export function SongCard({
           </Button>
           <div className="">
             <h3 className="mr-4 font-bold">{songName}</h3>
-            <p className="text-sm">{artistName}</p>
-            <p className="text-sm mt-1">{price} <span className="text-xs">USDC</span></p>
+            <p className="text-sm">{artistName.slice(0, 16)}...</p>
+            <p className="text-sm mt-1">{formatEther(price)} <span className="text-xs">USDC</span></p>
           </div>
         </CardContent>
         {/* <CardFooter className="px-4 pb-4">
