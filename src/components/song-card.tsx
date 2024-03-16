@@ -14,7 +14,7 @@ export function SongCard({ songName, artistName, albumCover, price, createdAt })
   };
 
   return (
-    <Tilt tiltReverse tiltMaxAngleX={5} tiltMaxAngleY={5} glareEnable>
+    <Tilt tiltReverse tiltMaxAngleX={7} tiltMaxAngleY={7} glareEnable className="rounded-lg overflow-hidden">
       <Card className="flex flex-col overflow-hidden rounded-lg shadow-lg hover:cursor-pointer">
         {/* Album cover as background image */}
         <div className="w-full h-52 flex-shrink-0 overflow-hidden flex justify-center items-center" style={albumCoverStyle}>
@@ -25,7 +25,7 @@ export function SongCard({ songName, artistName, albumCover, price, createdAt })
           <div className="">
             <h3 className="font-bold mr-4">{songName}</h3>
             <p className="text-sm">{artistName}</p>
-            <p className="text-sm">{price}</p>
+            <p className="text-sm mt-1">{price} <span className="text-xs">USDC</span></p>
           </div>
         </CardContent>
         {/* <CardFooter className="px-4 pb-4">
