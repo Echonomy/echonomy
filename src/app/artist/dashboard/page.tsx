@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/router";
+
 import React from "react";
 import { CreateSongForm } from "~/components/create-song-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -7,9 +7,7 @@ import ArtistSongs from "~/components/artist-songs";
 import { EditProfileForm } from "~/components/edit-profile";
 import { useSafeAccountClient } from "~/components/safe-account-provider";
 
-export const Dashboard = () => {
-  const router = useRouter();
-  const { state } = router.query;
+export default function Dashboard() {
   const safeAccountClient = useSafeAccountClient();
 
   return (
@@ -18,7 +16,7 @@ export const Dashboard = () => {
         Artist Dashboard
       </h1>
       <div className="">
-        <Tabs defaultValue={String(state) ?? "dash"} className="">
+        <Tabs defaultValue="dash" className="">
           <div className="flex justify-center">
             <TabsList className="">
               <TabsTrigger value="dash">Tunes</TabsTrigger>
@@ -46,7 +44,7 @@ export const Dashboard = () => {
       </div>
     </>
   );
-};
+}
 
 const UploadedTunesContent = () => {
   // Logic for displaying uploaded tunes content
@@ -57,5 +55,3 @@ const UploadNewTuneContent = () => {
   // Logic for displaying upload new tune content
   return <div>Upload New Tune</div>;
 };
-
-export default Dashboard;
