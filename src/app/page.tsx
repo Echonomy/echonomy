@@ -10,7 +10,16 @@ import { api } from "~/utils/trpc";
 export default function Home() {
   const { data: hello } = api.post.hello.useQuery({ text: "world" });
   const safeAccountClient = useSafeAccountClient();
-  const songCards = [{}];
+  const songCards = [
+    { songName: "Dreamer", artistName: "Lucid Waves", albumCover: "https://picsum.photos/seed/asdf/200/300", price: "$0.99", createdAt: "April 1, 2023" },
+    { songName: "Nightfall", artistName: "Eclipse", albumCover: "https://picsum.photos/seed/asdg/200/300", price: "$1.29", createdAt: "March 28, 2023" },
+    { songName: "Retrograde", artistName: "Voyager IV", albumCover: "https://picsum.photos/seed/ashd/200/300", price: "$0.79", createdAt: "March 15, 2023" },
+    { songName: "Horizon", artistName: "Skyline", albumCover: "https://picsum.photos/seed/agsd/200/300", price: "$1.49", createdAt: "April 5, 2023" },
+    { songName: "Ephemeral", artistName: "Aether", albumCover: "https://picsum.photos/seed/aagsd/200/300", price: "$1.09", createdAt: "February 20, 2023" },
+    { songName: "Silhouettes", artistName: "Shadowplay", albumCover: "https://picsum.photos/seed/agasdsd/200/300", price: "$0.89", createdAt: "January 10, 2023" },
+    { songName: "Cascade", artistName: "Waterfall", albumCover: "https://picsum.photos/seed/asad/200/300", price: "$1.19", createdAt: "March 22, 2023" },
+    { songName: "Whispers", artistName: "Gentle Breeze", albumCover: "https://picsum.photos/seed/asggd/200/300", price: "$0.99", createdAt: "April 2, 2023" }
+  ];
 
   return (
     <main className="flex flex-col justify-center text-white">
@@ -35,19 +44,19 @@ export default function Home() {
           }
         </div>
 
-        <div className="text-md font-extrabold tracking-tight text-2xl my-4 mt-10">
+        <div className="text-md font-semibold tracking-tight text-2xl my-4 mt-10">
           Recently uploaded
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {
-            songCards.map((x, i) =>
+            songCards.map((song, i) =>
               <SongCard
                 key={i}
-                songName="Song Name"
-                artistName="Artist Name"
-                albumCover="https://images.unsplash.com/photo-1707494750832-48a457145d12?q=80&w=2789&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                price="$1.29"
-                createdAt="March 10, 2023"
+                songName={song.songName}
+                artistName={song.artistName}
+                albumCover={song.albumCover}
+                price={song.price}
+                createdAt={song.createdAt}
               />
             )
           }

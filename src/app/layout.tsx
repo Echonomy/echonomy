@@ -27,12 +27,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider>
-          <Nav />
-          <DynamicProvider>
-            <SafeAccountProvider>{children}</SafeAccountProvider>
-          </DynamicProvider>
-        </TRPCReactProvider>
+        <div className="max-w-5xl m-auto">
+          <TRPCReactProvider>
+            <Nav />
+            <DynamicProvider>
+              <SafeAccountProvider>{children}</SafeAccountProvider>
+            </DynamicProvider>
+          </TRPCReactProvider>
+        </div>
       </body>
     </html>
   );
