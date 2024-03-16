@@ -1,5 +1,7 @@
 "use client"
 
+import { useSafeAccountClient } from "~/components/safe-account-provider";
+import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import * as React from "react"
 import Link from "next/link"
 
@@ -23,48 +25,70 @@ const components: { title: string; href: string; description: string }[] = [
   },
   {
     title: "Upload a Tune",
-    href: "/artist/create-tune",
+    href: "/artist/dashboard?state=upload",
     description:
       "Create a new tune to be listed on the public marketplace.",
+  },
+  {
+    title: "Settings",
+    href: "/artist/dashboard?state=settings",
+    description:
+      "Update your artist profile.",
   },
 ]
 
 export function Nav() {
-  return (
-    <div className="w-full flex justify-center pt-5"> {/* Wrapper to ensure full width and centering */}
+  const safeAccountClient = useSafeAccountClient();
+  const {
+    handleLogOut,
+    primaryWallet
+  } = useDynamicContext();
 
+  return (
+    <div className="w-full flex items-center justify-center pt-5"> {/* Wrapper to ensure full width and centering */}
       <NavigationMenu className="block w-full flex justify-center align-center">
-        <NavigationMenuList className="flex justify-center align-center w-full">
+        <NavigationMenuList className="flex justify-center align-center w-full gap-2">
           <NavigationMenuItem>
-            <Link href="/" legacyBehavior passHref>
+            <Link href="/" passHref>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                 Discover
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>For Artists</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-1 lg:w-[400px] ">
-                {components.map((component) => (
-                  <ListItem
-                    key={component.title}
-                    title={component.title}
-                    href={component.href}
-                  >
-                    {component.description}
-                  </ListItem>
-                ))}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                My Collection
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
+
+          {!primaryWallet && !safeAccountClient?.account ? (
+            <>
+              <NavigationMenuItem>
+                <DynamicWidget />
+              </NavigationMenuItem>
+            </>
+          ) : (
+            <>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>For Artists</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-1 lg:w-[400px] ">
+                    {components.map((component) => (
+                      <ListItem
+                        key={component.title}
+                        title={component.title}
+                        href={component.href}
+                      >
+                        {component.description}
+                      </ListItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/profile" passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    My Profile
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </>
+          )}
         </NavigationMenuList>
       </NavigationMenu>
     </div>
