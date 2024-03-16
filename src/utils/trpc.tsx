@@ -13,11 +13,10 @@ import SuperJSON from "superjson";
 import { type AppRouter } from "~/server/api/root";
 import {
   generateSignedProcedurePayload,
-  getTypedDataDomainForChainId,
   signatureProtectedMethods,
-  typedDataTypes,
 } from "./signature";
-import { getSafeAccountClient } from "~/components/safe-account-provider";
+import { getDynamicAccountClient } from "~/components/safe-account-provider";
+import { recoverMessageAddress } from "viem";
 
 const createQueryClient = () => new QueryClient();
 
@@ -45,8 +44,8 @@ const links = [
       headers.set("x-trpc-source", "nextjs-react");
       const mutationOp = opList.find((op) => op.type === "mutation");
       if (mutationOp && signatureProtectedMethods.includes(mutationOp.path)) {
-        const safeAccountClient = getSafeAccountClient();
-        if (!safeAccountClient?.account || !safeAccountClient?.chain)
+        const dynamicAccountClient = getDynamicAccountClient();
+        if (!dynamicAccountClient?.account || !dynamicAccountClient?.chain)
           throw new Error("Cannot call a tRPC mutation without a signature");
         const timestamp = new Date();
         const message = generateSignedProcedurePayload({
@@ -55,23 +54,21 @@ const links = [
           timestamp,
         });
 
-        const domain = getTypedDataDomainForChainId(safeAccountClient.chain.id);
+        const signature = await dynamicAccountClient?.signMessage({
+          account: dynamicAccountClient.account,
+          message,
+        });
 
-        const signature = await safeAccountClient?.signTypedData({
-          account: safeAccountClient.account,
-          domain,
-          types: typedDataTypes,
-          primaryType: "Generic",
-          message: {
-            contents: message,
-          },
+        const typedDataAddress = await recoverMessageAddress({
+          message,
+          signature,
         });
 
         headers.set("X-Ethereum-Timestamp", timestamp.toISOString());
         headers.set("X-Ethereum-Signature", signature);
         headers.set(
           "X-Ethereum-Chain-Id",
-          safeAccountClient.chain.id.toString(),
+          dynamicAccountClient.chain.id.toString(),
         );
       }
       return headers;

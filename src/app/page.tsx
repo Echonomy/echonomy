@@ -5,7 +5,6 @@ import { SongCard } from "~/components/song-card";
 import { ArtistCard } from "~/components/artist-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { contracts } from "~/contracts";
-import { api } from "~/utils/trpc";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();

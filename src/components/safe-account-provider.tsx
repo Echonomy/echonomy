@@ -12,7 +12,7 @@ import { signerToSafeSmartAccount } from "permissionless/accounts";
 import { pimlicoBundlerActions } from "permissionless/actions/pimlico";
 import { createPimlicoPaymasterClient } from "permissionless/clients/pimlico";
 import { useEffect } from "react";
-import { createClient, http } from "viem";
+import { createClient, http, type WalletClient } from "viem";
 import { usePublicClient, useWalletClient } from "wagmi";
 import { baseSepolia, sepolia } from "wagmi/chains";
 import { env } from "~/env";
@@ -22,12 +22,17 @@ import { create } from "zustand";
 type SafeAccountClient = SmartAccountClient<typeof ENTRYPOINT_ADDRESS_V06>;
 type SafeAccountClientStore = {
   client: SafeAccountClient | null;
-  setClient: (client: SafeAccountClient | null) => void;
+  eoaClient: WalletClient | null;
+  setClients: (
+    client: SafeAccountClient | null,
+    eoaClient: WalletClient | null,
+  ) => void;
 };
 
 const useSafeAccountClientStore = create<SafeAccountClientStore>()((set) => ({
   client: null,
-  setClient: (client) => set({ client }),
+  eoaClient: null,
+  setClients: (client, eoaClient) => set({ client, eoaClient }),
 }));
 
 export function useSafeAccountClient() {
@@ -36,6 +41,10 @@ export function useSafeAccountClient() {
 
 export function getSafeAccountClient() {
   return useSafeAccountClientStore.getState().client;
+}
+
+export function getDynamicAccountClient() {
+  return useSafeAccountClientStore.getState().eoaClient;
 }
 
 const pimlicoNetworkNames: Record<SupportedNetworkId, string> = {
@@ -49,13 +58,13 @@ export function SafeAccountProvider({
 }) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { setClient, client } = useSafeAccountClientStore();
+  const { setClients } = useSafeAccountClientStore();
 
   useEffect(() => {
     if (!walletClient || !publicClient) {
       return;
     }
-    setClient(null);
+    setClients(null, walletClient);
 
     const networkId = walletClient.chain.id;
     const network = supportedNetworks.find((n) => n.id === networkId);
@@ -89,7 +98,7 @@ export function SafeAccountProvider({
       safeVersion: "1.4.1",
       entryPoint: ENTRYPOINT_ADDRESS_V06,
     }).then((account) => {
-      setClient(
+      setClients(
         createSmartAccountClient({
           account,
           entryPoint: ENTRYPOINT_ADDRESS_V06,
@@ -101,9 +110,10 @@ export function SafeAccountProvider({
             sponsorUserOperation: paymasterClient.sponsorUserOperation,
           },
         }),
+        walletClient,
       );
     });
-  }, [walletClient, publicClient, setClient]);
+  }, [walletClient, publicClient, setClients]);
 
   return <>{children}</>;
 }

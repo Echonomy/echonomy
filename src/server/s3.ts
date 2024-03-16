@@ -29,13 +29,14 @@ export async function getTempFileFromS3(uploadId: string) {
     });
   }
 
+  // TODO uncomment this
   // Cleanup the temp file
-  await s3.send(
+  /* await s3.send(
     new DeleteObjectCommand({
       Bucket: env.AWS_S3_TEMP_BUCKET_NAME,
       Key: uploadId,
     }),
-  );
+  ); */
 
   return data;
 }

@@ -10,12 +10,12 @@ import { EditProfileForm } from '~/components/edit-profile';
 export const Dashboard = () => {
   return (
     <>
-      <h1 className="text-4xl mb-2 text-center mt-7 font-extrabold tracking-tight p-3">
+      <h1 className="mb-2 mt-7 p-3 text-center text-4xl font-extrabold tracking-tight">
         Artist Dashboard
       </h1>
       <div className="">
         <Tabs defaultValue="dash" className="">
-          <div className='flex justify-center'>
+          <div className="flex justify-center">
             <TabsList className="">
               <TabsTrigger value="dash">Tunes</TabsTrigger>
               <TabsTrigger value="upload">Upload</TabsTrigger>
@@ -29,7 +29,7 @@ export const Dashboard = () => {
             <TabsContent value="settings"><EditProfileForm /></TabsContent>
           </div>
         </Tabs>
-      </div >
+      </div>
     </>
   );
 };

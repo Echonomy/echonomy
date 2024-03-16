@@ -20,6 +20,10 @@ export const env = createEnv({
     AWS_SECRET_ACCESS_KEY: z.string(),
     AWS_DEFAULT_REGION: z.string(),
     AWS_S3_TEMP_BUCKET_NAME: z.string(),
+    FFMPEG_API_URL: z.string(),
+    FFMPEG_API_KEY: z.string(),
+    LIGHTHOUSE_API_KEY: z.string(),
+    MEDIA_KEK: z.string(),
   },
 
   /**
@@ -44,6 +48,10 @@ export const env = createEnv({
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     AWS_DEFAULT_REGION: process.env.AWS_DEFAULT_REGION,
     AWS_S3_TEMP_BUCKET_NAME: process.env.AWS_S3_TEMP_BUCKET_NAME,
+    FFMPEG_API_URL: process.env.FFMPEG_API_URL,
+    FFMPEG_API_KEY: process.env.FFMPEG_API_KEY,
+    LIGHTHOUSE_API_KEY: process.env.LIGHTHOUSE_API_KEY,
+    MEDIA_KEK: process.env.MEDIA_KEK,
     NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL:
       process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL,
     NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID:
