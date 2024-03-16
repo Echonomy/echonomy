@@ -1,14 +1,16 @@
 "use client";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React from "react";
 import { CreateSongForm } from "~/components/create-song-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ArtistSongs from "~/components/artist-songs";
 import { EditProfileForm } from "~/components/edit-profile";
+import { useSafeAccountClient } from "~/components/safe-account-provider";
 
 export const Dashboard = () => {
   const router = useRouter();
   const { state } = router.query;
+  const safeAccountClient = useSafeAccountClient();
 
   return (
     <>
@@ -27,7 +29,11 @@ export const Dashboard = () => {
 
           <div className="px-6">
             <TabsContent value="dash">
-              <ArtistSongs />
+              {safeAccountClient?.account?.address && (
+                <ArtistSongs
+                  walletAddress={safeAccountClient.account.address}
+                />
+              )}
             </TabsContent>
             <TabsContent value="upload">
               <CreateSongForm />
