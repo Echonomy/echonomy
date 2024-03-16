@@ -1,14 +1,22 @@
 "use client";
 
-import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage, FormItem } from "~/components/ui/form"
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormItem,
+} from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import Dropzone from "~/components/ui/dropzone";
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { SongCard } from "./song-card"
-import { api } from "~/utils/trpc"
+import { SongCard } from "./song-card";
+import { api } from "~/utils/trpc";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -19,7 +27,7 @@ const formSchema = z.object({
     message: "Price must be at least 0.1 USDC.",
   }),
   artwork: z.string(),
-})
+});
 
 export const CreateSongForm = () => {
   const [insertMetadataData, setInsertMetadataData] = useState(null);
@@ -27,12 +35,12 @@ export const CreateSongForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "Title",
-      price: 0
+      price: 0,
     },
-  })
+  });
 
   const insertMetadataMutation = api.media.insertMetadata.useMutation();
-  const signedUrlQuery = api.media.signedUrl.useQuery();
+  const signedUrlQuery = api.media.signedUrl.useMutation();
 
   const fields = form.watch();
 
@@ -43,7 +51,7 @@ export const CreateSongForm = () => {
         { name: "png", types: ["image/png"] },
       ];
       const fileType = allowedTypes.find((allowedType) =>
-        allowedType.types.find((type) => type === acceptedFiles?.[0]?.type)
+        allowedType.types.find((type) => type === acceptedFiles?.[0]?.type),
       );
       if (!fileType) {
         form.setValue("artwork", "");
@@ -54,8 +62,10 @@ export const CreateSongForm = () => {
       } else {
         const artworkFile = acceptedFiles?.[0];
         if (!artworkFile) return;
-        const x = await insertMetadataMutation.mutateAsync({ uploadId: signedUrlQuery.data?.uploadId });
-        console.log({ x })
+        const x = await insertMetadataMutation.mutateAsync({
+          uploadId: signedUrlQuery.data?.uploadId,
+        });
+        console.log({ x });
       }
     } else {
       form.setValue("artwork", null);
@@ -64,15 +74,14 @@ export const CreateSongForm = () => {
         type: "typeError",
       });
     }
-  }
+  };
 
   return (
     <Form {...form}>
-
-      <div className="text-md font-semibold tracking-tight text-2xl my-4 mt-10">
+      <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
         Create a new Tune
       </div>
-      <div className="grid md:grid-cols-3 gap-12">
+      <div className="grid gap-12 md:grid-cols-3">
         <div className="space-y-4 md:col-span-2">
           <FormField
             name="title"
@@ -87,8 +96,7 @@ export const CreateSongForm = () => {
               </FormItem>
             )}
           />
-          < FormField
-
+          <FormField
             name="price"
             render={({ field }) => (
               <FormItem>
@@ -96,13 +104,14 @@ export const CreateSongForm = () => {
                 <FormControl>
                   <Input type="number" placeholder="Enter price" {...field} />
                 </FormControl>
-                <FormDescription>Enter the price you want users to pay for this tune in USDC.</FormDescription>
+                <FormDescription>
+                  Enter the price you want users to pay for this tune in USDC.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
-
             name="file"
             render={({ field }) => (
               <FormItem>
@@ -115,7 +124,9 @@ export const CreateSongForm = () => {
                     handleOnDrop={handleDropArtwork}
                   />
                 </FormControl>
-                <FormDescription>Upload your tune's artwork in an image file format.</FormDescription>
+                <FormDescription>
+                  Upload your tune's artwork in an image file format.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -123,10 +134,18 @@ export const CreateSongForm = () => {
           <Button type="submit">Upload</Button>
         </div>
         <div>
-          <div className="font-semibold tracking-tight text-neutral-500 mb-3 text-center">
+          <div className="mb-3 text-center font-semibold tracking-tight text-neutral-500">
             Tune preview
           </div>
-          <SongCard {...{ songName: fields.title || "Title", artistName: "Lucid Waves", albumCover: "https://picsum.photos/seed/asdf/200/300", price: fields.price, createdAt: "April 1, 2023" }} />
+          <SongCard
+            {...{
+              songName: fields.title || "Title",
+              artistName: "Lucid Waves",
+              albumCover: "https://picsum.photos/seed/asdf/200/300",
+              price: fields.price,
+              createdAt: "April 1, 2023",
+            }}
+          />
         </div>
       </div>
     </Form>
