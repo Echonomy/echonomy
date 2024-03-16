@@ -6,9 +6,9 @@ import { SongCard } from "~/components/song-card";
 import { api } from "~/utils/trpc";
 
 export default function ArtistPage({
-  walletAddress,
+  params: { walletAddress },
 }: {
-  walletAddress: string;
+  params: { walletAddress: string };
 }) {
   const artist = api.artists.get.useQuery({
     walletAddress,
