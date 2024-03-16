@@ -6,24 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { api } from "~/utils/trpc";
 
 export default function Home() {
-  const dummyArtists = [
-    {
-      id: 1,
-      name: "John Doe",
-      profile_pic: "https://noun-api.com/beta/pfp",
-      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      address: "0x123",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      profile_pic: "https://noun-api.com/beta/pfp",
-      bio: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      address: "0x123",
-    },
-    // Add more dummy artists as needed
-  ];
-
   const songsQuery = api.songs.list.useQuery();
   const artistsQuery = api.artists.list.useQuery();
 
@@ -61,7 +43,6 @@ export default function Home() {
                     albumCover={song.artwork}
                     price={song.price}
                     createdAt={song.createdAt}
-                    address={song.artist.walletAddress}
                   />
                 ))}
               </div>
