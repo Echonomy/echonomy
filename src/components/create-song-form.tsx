@@ -1,12 +1,15 @@
-// import { FormField, FormLabel, FormControl, Input, FormDescription, FormMessage, Button } from "~/components/ui";
+"use client";
+
 import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage, FormItem } from "~/components/ui/form"
-import { Input } from "~/components/ui/Input"
-import { Button } from "~/components/ui/Button"
-import Dropzone from "~/components/ui/Dropzone"
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import Dropzone from "~/components/ui/dropzone";
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod";
 import { SongCard } from "./song-card"
+import { api } from "~/utils/trpc"
+import { useState } from "react";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -15,10 +18,11 @@ const formSchema = z.object({
   price: z.number().min(0, {
     message: "Price must be at least 0.1 USDC.",
   }),
+  artwork: z.string(),
 })
 
 export const CreateSongForm = () => {
-
+  const [insertMetadataData, setInsertMetadataData] = useState(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -27,12 +31,39 @@ export const CreateSongForm = () => {
     },
   })
 
+  const insertMetadataMutation = api.media.insertMetadata.useMutation();
+  const signedUrlQuery = api.media.signedUrl.useQuery();
+
   const fields = form.watch();
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  const handleDropArtwork = async (acceptedFiles: FileList | null) => {
+    if (acceptedFiles && acceptedFiles.length > 0) {
+      const allowedTypes = [
+        { name: "jpg", types: ["image/jpeg"] },
+        { name: "png", types: ["image/png"] },
+      ];
+      const fileType = allowedTypes.find((allowedType) =>
+        allowedType.types.find((type) => type === acceptedFiles?.[0]?.type)
+      );
+      if (!fileType) {
+        form.setValue("artwork", "");
+        form.setError("artwork", {
+          message: "File type is not valid",
+          type: "typeError",
+        });
+      } else {
+        const artworkFile = acceptedFiles?.[0];
+        if (!artworkFile) return;
+        const x = await insertMetadataMutation.mutateAsync({ uploadId: signedUrlQuery.data?.uploadId });
+        console.log({ x })
+      }
+    } else {
+      form.setValue("artwork", null);
+      form.setError("artwork", {
+        message: "Artwork is required",
+        type: "typeError",
+      });
+    }
   }
 
   return (
@@ -70,26 +101,26 @@ export const CreateSongForm = () => {
               </FormItem>
             )}
           />
-          < FormField
+          <FormField
 
             name="file"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>File</FormLabel>
+                <FormLabel>Artwork</FormLabel>
                 <FormControl>
                   {/* <Input type="file" {...field} /> */}
                   <Dropzone
                     {...field}
                     dropMessage="Drop files or click here"
-                    handleOnDrop={() => null}
+                    handleOnDrop={handleDropArtwork}
                   />
                 </FormControl>
-                <FormDescription>Upload your tune file.</FormDescription>
+                <FormDescription>Upload your tune's artwork in an image file format.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit"> Upload</Button>
+          <Button type="submit">Upload</Button>
         </div>
         <div>
           <div className="font-semibold tracking-tight text-neutral-500 mb-3 text-center">
