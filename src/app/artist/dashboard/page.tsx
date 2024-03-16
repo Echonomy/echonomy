@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from "react";
 import { CreateSongForm } from "~/components/create-song-form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
-import ArtistSongs from "~/components/artist-songs"
-import { EditProfileForm } from '~/components/edit-profile';
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import ArtistSongs from "~/components/artist-songs";
+import { EditProfileForm } from "~/components/edit-profile";
 
 export const Dashboard = () => {
   return (
@@ -24,9 +23,15 @@ export const Dashboard = () => {
           </div>
 
           <div className="px-6">
-            <TabsContent value="dash"><ArtistSongs /></TabsContent>
-            <TabsContent value="upload"><CreateSongForm /></TabsContent>
-            <TabsContent value="settings"><EditProfileForm /></TabsContent>
+            <TabsContent value="dash">
+              <ArtistSongs />
+            </TabsContent>
+            <TabsContent value="upload">
+              <CreateSongForm />
+            </TabsContent>
+            <TabsContent value="settings">
+              <EditProfileForm />
+            </TabsContent>
           </div>
         </Tabs>
       </div>

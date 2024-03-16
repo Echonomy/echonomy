@@ -10,7 +10,7 @@ export function ArtistCard({
   walletAddress,
 }: {
   name: string;
-  bio: string;
+  bio: string | null;
   avatar: string | null;
   walletAddress: string;
 }) {
