@@ -12,6 +12,7 @@ import { baseSepolia } from "viem/chains";
 import { contracts } from "~/contracts";
 import { contractAddress } from "~/consts/contracts";
 import sharp from "sharp";
+import { callFFmpeg } from "~/server/ffmpeg";
 
 export const mediaRouter = createTRPCRouter({
   insertMetadata: procedure.private
@@ -49,11 +50,11 @@ export const mediaRouter = createTRPCRouter({
       // Try to download the files
 
       const uploadedArtwork = await getTempFileFromS3(input.artworkUploadId);
-      const media = await getTempFileFromS3(input.mediaUploadId);
+      const rawMedia = await getTempFileFromS3(input.mediaUploadId);
 
       // Normalize the image
 
-      const artwork = sharp(uploadedArtwork)
+      const artwork = await sharp(uploadedArtwork)
         .resize({
           width: 1024,
           height: 1024,
@@ -62,7 +63,16 @@ export const mediaRouter = createTRPCRouter({
         .jpeg({ quality: 80 })
         .toBuffer();
 
-      return {};
+      const [fullSong, previewSong] = await Promise.all([
+        callFFmpeg(rawMedia, ""),
+        callFFmpeg(rawMedia, "-t 30 -b:a 128k"),
+      ]);
+
+      return {
+        artworkLength: artwork.length,
+        fullSongLength: fullSong.length,
+        previewSongLength: previewSong.length,
+      };
     }),
 
   signedUrl: procedure.public.mutation(async () => {

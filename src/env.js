@@ -20,6 +20,8 @@ export const env = createEnv({
     AWS_SECRET_ACCESS_KEY: z.string(),
     AWS_DEFAULT_REGION: z.string(),
     AWS_S3_TEMP_BUCKET_NAME: z.string(),
+    FFMPEG_API_URL: z.string(),
+    FFMPEG_API_KEY: z.string(),
   },
 
   /**
