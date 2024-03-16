@@ -1,5 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { songsRouter } from "./routers/songs";
+import { artistsRouter } from "./routers/artists";
 
 /**
  * This is the primary router for your server.
@@ -7,6 +8,7 @@ import { songsRouter } from "./routers/songs";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  artists: artistsRouter,
   songs: songsRouter,
 });
 

@@ -1,28 +1,25 @@
 "use client";
 
-import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
 import { ArtistCard } from "~/components/artist-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { api } from "~/utils/trpc";
-import { useEffect } from "react";
 
 export default function Home() {
-  const safeAccountClient = useSafeAccountClient();
   const dummyArtists = [
     {
       id: 1,
       name: "John Doe",
       profile_pic: "https://noun-api.com/beta/pfp",
       bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      address: "0x123"
+      address: "0x123",
     },
     {
       id: 2,
       name: "Jane Smith",
       profile_pic: "https://noun-api.com/beta/pfp",
       bio: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      address: "0x123"
+      address: "0x123",
     },
   ];
 
@@ -41,7 +38,7 @@ export default function Home() {
           </h3>
         </div>
         <Tabs defaultValue="tunes" className="">
-          <div className='flex justify-center'>
+          <div className="flex justify-center">
             <TabsList className="mt-5">
               <TabsTrigger value="tunes">Browse Tunes</TabsTrigger>
               <TabsTrigger value="artists">Browse Artists</TabsTrigger>
@@ -54,9 +51,7 @@ export default function Home() {
                 Recently uploaded
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {!songsQuery || !songsQuery.data && (
-                  <div>Loading...</div>
-                )}
+                {!songsQuery || (!songsQuery.data && <div>Loading...</div>)}
                 {songsQuery?.data?.map((song, i) => (
                   <SongCard
                     key={i}
@@ -66,7 +61,7 @@ export default function Home() {
                     albumCover={song.artwork}
                     price={song.price}
                     createdAt={song.createdAt}
-                    address={song.artistWalletAddress}
+                    address={song.artist.walletAddress}
                   />
                 ))}
               </div>
@@ -76,11 +71,8 @@ export default function Home() {
                 All independent artists
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {dummyArtists.map((artist, i) => (
-                  <ArtistCard
-                    key={i}
-                    {...artist}
-                  />
+                {artistsQuery.data?.map((artist, i) => (
+                  <ArtistCard key={i} {...artist} bio="" />
                 ))}
               </div>
             </TabsContent>

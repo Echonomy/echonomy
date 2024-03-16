@@ -15,18 +15,16 @@ import sharp from "sharp";
 import { callFFmpeg } from "~/server/ffmpeg";
 import { uploadToLighthouse } from "~/server/lighthouse";
 import { db } from "~/server/db";
+import { selectSongMeta } from "~/server/select";
+import { mapSongMetaToDto } from "~/server/mappers";
 
 export const songsRouter = createTRPCRouter({
   list: procedure.public.query(() => {
-    return db.song.findMany().then((songs) =>
-      songs.map((song) => ({
-        ...song,
-        artwork: "https://gateway.lighthouse.storage/ipfs/" + song.artwork,
-        previewSong:
-          "https://gateway.lighthouse.storage/ipfs/" + song.previewSong,
-        fullSong: "https://gateway.lighthouse.storage/ipfs/" + song.fullSong,
-      })),
-    );
+    return db.song
+      .findMany({
+        select: selectSongMeta,
+      })
+      .then((songs) => songs.map(mapSongMetaToDto));
   }),
 
   listByArtist: procedure.public
@@ -38,20 +36,12 @@ export const songsRouter = createTRPCRouter({
     .query(({ input }) => {
       return db.song
         .findMany({
+          select: selectSongMeta,
           where: {
             artistWalletAddress: input.artistWalletAddress,
           },
         })
-        .then((songs) =>
-          songs.map((song) => ({
-            ...song,
-            artwork: "https://gateway.lighthouse.storage/ipfs/" + song.artwork,
-            previewSong:
-              "https://gateway.lighthouse.storage/ipfs/" + song.previewSong,
-            fullSong:
-              "https://gateway.lighthouse.storage/ipfs/" + song.fullSong,
-          })),
-        );
+        .then((songs) => songs.map(mapSongMetaToDto));
     }),
 
   register: procedure.private
@@ -71,26 +61,33 @@ export const songsRouter = createTRPCRouter({
         console.log(`[insertMetadata ${id}] ${message}`);
       };
 
-      log("Loading blockchain data...");
-
-      // Check permissions
-
       const viem = createPublicClient({
         chain: baseSepolia,
         transport: http(env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL),
       });
 
-      const contract = await viem.readContract({
-        abi: contracts.EchonomySongRegistry,
-        address: contractAddresses[84532].EchonomySongRegistry,
-        functionName: "song",
-        args: [BigInt(input.songId)],
-      });
+      log("Checking permissions...");
 
       const songOwner = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
         address: contractAddresses[84532].EchonomySongRegistry,
         functionName: "songOwner",
+        args: [BigInt(input.songId)],
+      });
+
+      if (songOwner !== walletAddress) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not the owner of the song",
+        });
+      }
+
+      log("Loading blockchain data...");
+
+      const contract = await viem.readContract({
+        abi: contracts.EchonomySongRegistry,
+        address: contractAddresses[84532].EchonomySongRegistry,
+        functionName: "song",
         args: [BigInt(input.songId)],
       });
 
@@ -100,21 +97,6 @@ export const songsRouter = createTRPCRouter({
         functionName: "songPrice",
         args: [BigInt(input.songId)],
       });
-
-      log("Checking permissions...");
-
-      const safeOwners = await viem.readContract({
-        abi: contracts.Safe,
-        address: songOwner,
-        functionName: "getOwners",
-      });
-
-      if (!safeOwners.includes(walletAddress)) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not the owner of the song",
-        });
-      }
 
       log("Getting files from S3...");
 
@@ -212,7 +194,17 @@ export const songsRouter = createTRPCRouter({
           fullSong: fullSongName,
           price: price.toString(),
           contractAddress: contract,
-          artistWalletAddress: songOwner,
+          artist: {
+            connectOrCreate: {
+              where: {
+                walletAddress: songOwner,
+              },
+              create: {
+                walletAddress: songOwner,
+                name: "Unknown",
+              },
+            },
+          },
         },
       });
     }),

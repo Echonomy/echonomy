@@ -18,10 +18,21 @@ model Song {
   encryptedKey        String
   contractAddress     String
   artistWalletAddress String
+  artist              Artist  @relation(fields: [artistWalletAddress], references: [walletAddress])
   artwork             String
   fullSong            String
   previewSong         String
   createdAt           DateTime @default(now())
 
   @@index([title])
+}
+
+model Artist {
+  walletAddress       String   @id
+  name                String
+  avatar              String?
+  songs               Song[]
+  createdAt           DateTime @default(now())
+
+  @@index([name])
 }

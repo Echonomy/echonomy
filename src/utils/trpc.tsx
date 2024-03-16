@@ -15,8 +15,10 @@ import {
   generateSignedProcedurePayload,
   signatureProtectedMethods,
 } from "./signature";
-import { getDynamicAccountClient } from "~/components/safe-account-provider";
-import { recoverMessageAddress } from "viem";
+import {
+  getDynamicAccountClient,
+  getSafeAccountClient,
+} from "~/components/safe-account-provider";
 
 const createQueryClient = () => new QueryClient();
 
@@ -45,6 +47,7 @@ const links = [
       const mutationOp = opList.find((op) => op.type === "mutation");
       if (mutationOp && signatureProtectedMethods.includes(mutationOp.path)) {
         const dynamicAccountClient = getDynamicAccountClient();
+        const safeAccountClient = getSafeAccountClient();
         if (!dynamicAccountClient?.account || !dynamicAccountClient?.chain)
           throw new Error("Cannot call a tRPC mutation without a signature");
         const timestamp = new Date();
@@ -60,6 +63,10 @@ const links = [
         });
 
         headers.set("X-Ethereum-Timestamp", timestamp.toISOString());
+        headers.set(
+          "X-Ethereum-Safe-Address",
+          safeAccountClient?.account?.address ?? "",
+        );
         headers.set("X-Ethereum-Signature", signature);
         headers.set(
           "X-Ethereum-Chain-Id",
