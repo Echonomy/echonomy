@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { z } from "zod";
 import { api } from "~/utils/trpc";
 import Dropzone from "~/components/ui/dropzone";
@@ -10,22 +11,24 @@ import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage, 
 import { SongCard } from "./song-card";
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
+  name: z.string().min(2, {
+    message: "name must be at least 2 characters.",
   }),
+  bio: z.string(),
   price: z.number().min(0, {
-    message: "Price must be at least 0.1 USDC.",
+    message: "Price must be at least 0 USDC.",
   }),
   artwork: z.string(),
 });
 
-export const CreateSongForm = () => {
+export const EditProfileForm = () => {
+  const safeAccountClient = useSafeAccountClient();
   const [artworkFile, setArtworkFile] = useState<string | null>(null);
-  const [insertMetadataData, setInsertMetadataData] = useState(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "Title",
+      name: "",
+      bio: "",
       price: 0,
     },
   });
@@ -85,7 +88,7 @@ export const CreateSongForm = () => {
     const formData = form.getValues();
     await insertMetadataMutation.mutateAsync({
       songId: 123, // Replace with actual song ID
-      title: formData.title,
+      name: formData.name,
       description: "Song description", // Replace with actual description
       artworkUploadId: formData.artwork,
       mediaUploadId: "mediaUploadId", // Replace with actual media upload ID
@@ -94,35 +97,31 @@ export const CreateSongForm = () => {
 
   return (
     <Form {...form} onSubmit={handleFormSubmit}>
-      <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
-        Create a new Tune
-      </div>
-      <div className="grid gap-12 md:grid-cols-3">
+      <div className="grid gap-12 md:grid-cols-4 pt-7">
+        <div className="md:col-span-1"></div>
         <div className="space-y-4 md:col-span-2">
           <FormField
-            name="title"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter title" {...field} />
+                  <Input placeholder="Enter name" {...field} />
                 </FormControl>
-                <FormDescription>Enter the title of your tune.</FormDescription>
+                <FormDescription>Your artist / band / producer name that will be seen across the platform.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
-            name="price"
+            name="bio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Price</FormLabel>
+                <FormLabel>Bio</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Enter price" {...field} />
+                  <Input placeholder="Enter bio" {...field} />
                 </FormControl>
-                <FormDescription>
-                  Enter the price you want users to pay for this tune in USDC.
-                </FormDescription>
+                <FormDescription>Short biography about yourself as an artist.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -131,7 +130,7 @@ export const CreateSongForm = () => {
             name="file"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Artwork</FormLabel>
+                <FormLabel>Profile Picture</FormLabel>
                 <FormControl>
                   {/* <Input type="file" {...field} /> */}
                   <Dropzone
@@ -141,48 +140,19 @@ export const CreateSongForm = () => {
                   />
                 </FormControl>
                 <FormDescription>
-                  Upload your tune's artwork in an image file format.
+                  Upload a profile picture that best represents you as an artist.
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <FormField
-            name="file"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tune File</FormLabel>
-                <FormControl>
-                  {/* <Input type="file" {...field} /> */}
-                  <Dropzone
-                    {...field}
-                    dropMessage="Drop files or click here"
-                    handleOnDrop={handleDropArtwork}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Upload your tune's mp3 / wav file.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Upload</Button>
-        </div>
-        <div>
-          <div className="mb-3 text-center font-semibold tracking-tight text-neutral-500">
-            Tune preview
+          <Button type="submit">Save</Button>
+          <div className="text-xs text-neutral-700 text-center pt-10">
+            <span className="font-bold">Your Safe Account:</span>{" "}
+            {safeAccountClient?.account?.address}
           </div>
-          <SongCard
-            albumCover={artworkFile ? artworkFile : "https://picsum.photos/seed/asdf/200/300"}
-            {...{
-              songName: fields.title || "Title",
-              artistName: "Lucid Waves",
-              price: fields.price,
-              createdAt: "April 1, 2023",
-            }}
-          />
         </div>
+        <div className="md:col-span-1"></div>
       </div>
     </Form>
   );

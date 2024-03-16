@@ -1,14 +1,32 @@
 "use client";
 
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
 import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
-import { contractAddress } from "~/consts/contracts";
+import { ArtistCard } from "~/components/artist-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { contracts } from "~/contracts";
 import { api } from "~/utils/trpc";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();
+  const dummyArtists = [
+    {
+      id: 1,
+      name: "John Doe",
+      profile_pic: "https://noun-api.com/beta/pfp",
+      bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      address: "0x123"
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      profile_pic: "https://noun-api.com/beta/pfp",
+      bio: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      address: "0x123"
+    },
+    // Add more dummy artists as needed
+  ];
+
   const songCards = [
     {
       songName: "Dreamer",
@@ -68,17 +86,17 @@ export default function Home() {
     },
   ];
 
-  const createSong = () => {
-    if (!safeAccountClient?.chain || !safeAccountClient?.account) return;
-    void safeAccountClient.writeContract({
-      address: contractAddress[84532].EchonomySongRegistry,
-      account: safeAccountClient.account,
-      chain: safeAccountClient.chain,
-      abi: contracts.EchonomySongRegistry,
-      functionName: "createSongContract",
-      args: ["Song Name", 1000000000000000000n],
-    });
-  };
+  // const createSong = () => {
+  //   if (!safeAccountClient?.chain || !safeAccountClient?.account) return;
+  //   void safeAccountClient.writeContract({
+  //     address: contractAddress[84532].EchonomySongRegistry,
+  //     account: safeAccountClient.account,
+  //     chain: safeAccountClient.chain,
+  //     abi: contracts.EchonomySongRegistry,
+  //     functionName: "createSongContract",
+  //     args: ["Song Name", 1000000000000000000n],
+  //   });
+  // };
 
   return (
     <main className="flex flex-col justify-center text-white">
@@ -90,38 +108,48 @@ export default function Home() {
           <h3 className="mb-2 mt-3">
             a music distribution platform for independent artists, done right.
           </h3>
-          {!safeAccountClient?.account ? (
-            <>
-              <div className="mt-5 flex w-full justify-center">
-                <DynamicWidget />
-              </div>
-            </>
-          ) : (
-            <div className="text-xs text-neutral-700">
-              <span className="font-bold">Your Safe Account:</span>{" "}
-              {safeAccountClient?.account?.address}
-              <button onClick={createSong} className="ml-2">
-                Create Song
-              </button>
-            </div>
-          )}
         </div>
+        <Tabs defaultValue="tunes" className="">
+          <div className='flex justify-center'>
+            <TabsList className="mt-5">
+              <TabsTrigger value="tunes">Browse Tunes</TabsTrigger>
+              <TabsTrigger value="artists">Browse Artists</TabsTrigger>
+            </TabsList>
+          </div>
 
-        <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
-          Recently uploaded
-        </div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {songCards.map((song, i) => (
-            <SongCard
-              key={i}
-              songName={song.songName}
-              artistName={song.artistName}
-              albumCover={song.albumCover}
-              price={song.price}
-              createdAt={song.createdAt}
-            />
-          ))}
-        </div>
+          <div className="px-6">
+            <TabsContent value="tunes">
+              <div className="text-md my-3 text-2xl font-semibold tracking-tight">
+                Recently uploaded
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {songCards.map((song, i) => (
+                  <SongCard
+                    key={i}
+                    songName={song.songName}
+                    artistName={song.artistName}
+                    albumCover={song.albumCover}
+                    price={song.price}
+                    createdAt={song.createdAt}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+            <TabsContent value="artists">
+              <div className="text-md my-3 text-2xl font-semibold tracking-tight">
+                All independent artists
+              </div>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {dummyArtists.map((artist, i) => (
+                  <ArtistCard
+                    key={i}
+                    {...artist}
+                  />
+                ))}
+              </div>
+            </TabsContent>
+          </div>
+        </Tabs>
       </div>
     </main>
   );

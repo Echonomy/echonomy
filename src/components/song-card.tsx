@@ -12,7 +12,7 @@ export function SongCard({
 }: {
   songName: string;
   artistName: string;
-  albumCover: string;
+  albumCover: any;
   price: string;
   createdAt: string;
 }) {
