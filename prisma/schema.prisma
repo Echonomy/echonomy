@@ -18,7 +18,7 @@ model Song {
   encryptedKey        String
   contractAddress     String
   artistWalletAddress String
-  artist              Artist?  @relation(fields: [artistWalletAddress], references: [walletAddress])
+  artist              Artist  @relation(fields: [artistWalletAddress], references: [walletAddress])
   artwork             String
   fullSong            String
   previewSong         String

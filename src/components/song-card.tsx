@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Card, CardContent, CardFooter } from "~/components/ui/card";
+import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { PlayIcon } from "@radix-ui/react-icons";
 import Tilt from "react-parallax-tilt";
-import { formatEther } from 'viem'
+import { formatEther } from "viem";
 
 export function SongCard({
   songName,
@@ -13,9 +13,9 @@ export function SongCard({
 }: {
   songName: string;
   artistName: string;
-  albumCover: any;
+  albumCover: string;
   price: string;
-  createdAt: string;
+  createdAt: Date;
 }) {
   // Inline style for background image
   const albumCoverStyle = {
@@ -26,7 +26,13 @@ export function SongCard({
   };
 
   return (
-    <Tilt tiltReverse tiltMaxAngleX={7} tiltMaxAngleY={7} glareEnable className="rounded-lg overflow-hidden">
+    <Tilt
+      tiltReverse
+      tiltMaxAngleX={7}
+      tiltMaxAngleY={7}
+      glareEnable
+      className="overflow-hidden rounded-lg"
+    >
       <Card className="flex flex-col overflow-hidden rounded-lg shadow-lg hover:cursor-pointer">
         {/* Album cover as background image */}
         <div
@@ -44,7 +50,9 @@ export function SongCard({
           <div className="">
             <h3 className="mr-4 font-bold">{songName}</h3>
             <p className="text-sm">{artistName.slice(0, 16)}...</p>
-            <p className="text-sm mt-1">{formatEther(price)} <span className="text-xs">USDC</span></p>
+            <p className="mt-1 text-sm">
+              {formatEther(BigInt(price))} <span className="text-xs">USDC</span>
+            </p>
           </div>
         </CardContent>
         {/* <CardFooter className="px-4 pb-4">
