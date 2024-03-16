@@ -6,8 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ArtistSongs from "~/components/artist-songs";
 import { EditProfileForm } from "~/components/edit-profile";
 import { useSafeAccountClient } from "~/components/safe-account-provider";
+import { useSearchParams } from "next/navigation";
 
 export default function Dashboard() {
+  const searchParams = useSearchParams();
   const safeAccountClient = useSafeAccountClient();
 
   return (
@@ -16,7 +18,7 @@ export default function Dashboard() {
         Artist Dashboard
       </h1>
       <div className="">
-        <Tabs defaultValue="dash" className="">
+        <Tabs defaultValue={searchParams.get("state") ?? "dash"} className="">
           <div className="flex justify-center">
             <TabsList className="">
               <TabsTrigger value="dash">Tunes</TabsTrigger>
