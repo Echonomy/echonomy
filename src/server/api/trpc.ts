@@ -87,14 +87,17 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const procedure = t.procedure.use(
-  async ({ ctx, getRawInput, path, next }) => {
-    if (!signatureProtectedMethods.includes(path)) return next({ ctx });
+export const procedure = {
+  public: t.procedure,
+  private: t.procedure.use(async ({ ctx, getRawInput, path, next }) => {
+    if (!signatureProtectedMethods.includes(path))
+      throw new Error("Path is not included in signatureProtectedMethods");
 
     const signature = ctx.headers.get("X-Ethereum-Signature");
-    const chainId = ctx.headers.get("X-Ethereum-Chain-Id");
+    const chainId = Number(ctx.headers.get("X-Ethereum-Chain-Id"));
+    const timestamp = ctx.headers.get("X-Ethereum-Timestamp");
 
-    if (!signature || !chainId) {
+    if (!signature || !chainId || !timestamp) {
       throw new TRPCError({
         message: "No signature found",
         code: "UNAUTHORIZED",
@@ -104,7 +107,7 @@ export const procedure = t.procedure.use(
     const message = generateSignedProcedurePayload({
       input: await getRawInput(),
       path,
-      timestamp: new Date(ctx.headers.get("X-Ethereum-Timestamp")!),
+      timestamp: new Date(timestamp),
     });
 
     console.log("Received", { message, signature });
@@ -120,7 +123,7 @@ export const procedure = t.procedure.use(
 
     try {
       walletAddress = await recoverTypedDataAddress({
-        domain: getTypedDataDomainForChainId(Number(chainId)),
+        domain: getTypedDataDomainForChainId(chainId),
         types: typedDataTypes,
         primaryType: "Generic",
         message: {
@@ -135,6 +138,6 @@ export const procedure = t.procedure.use(
       });
     }
 
-    return next({ ctx: { ...ctx, walletAddress } });
-  },
-);
+    return next({ ctx: { ...ctx, chainId, walletAddress } });
+  }),
+};

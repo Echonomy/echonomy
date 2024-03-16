@@ -3,56 +3,69 @@ import { nanoid } from "nanoid";
 
 import { createTRPCRouter, procedure } from "~/server/api/trpc";
 import { env } from "~/env";
-import { s3 } from "~/server/s3";
+import { getTempFileFromS3, s3 } from "~/server/s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import {
-  DeleteObjectCommand,
-  GetObjectCommand,
-  PutObjectCommand,
-} from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { TRPCError } from "@trpc/server";
+import { createPublicClient, http } from "viem";
+import { baseSepolia } from "viem/chains";
+import { contracts } from "~/contracts";
+import { contractAddress } from "~/consts/contracts";
+import sharp from "sharp";
 
 export const mediaRouter = createTRPCRouter({
-  insertMetadata: procedure
+  insertMetadata: procedure.private
     .input(
       z.object({
-        uploadId: z.string(),
+        songId: z.bigint(),
+        title: z.string(),
+        description: z.string(),
+        artworkUploadId: z.string(),
+        mediaUploadId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
-      let data: Uint8Array = new Uint8Array();
-      try {
-        const file = await s3.send(
-          new GetObjectCommand({
-            Bucket: env.AWS_S3_TEMP_BUCKET_NAME,
-            Key: input.uploadId,
-          }),
-        );
-        if (!file.Body) {
-          throw new Error("Missing body");
-        }
-        data = await file.Body.transformToByteArray();
-      } catch (err) {
+    .mutation(async ({ ctx: { chainId, walletAddress }, input }) => {
+      // Check permissions
+
+      const viem = createPublicClient({
+        chain: baseSepolia,
+        transport: http(env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL),
+      });
+
+      const songOwner = await viem.readContract({
+        abi: contracts.EchonomySongRegistry,
+        address: contractAddress[84532].EchonomySongRegistry,
+        functionName: "getSongOwner",
+        args: [input.songId],
+      });
+
+      if (songOwner !== walletAddress) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "File with the given uploadId not found or expired",
+          code: "UNAUTHORIZED",
+          message: "You are not the owner of the song",
         });
       }
 
-      // Cleanup the temp file
-      await s3.send(
-        new DeleteObjectCommand({
-          Bucket: env.AWS_S3_TEMP_BUCKET_NAME,
-          Key: input.uploadId,
-        }),
-      );
+      // Try to download the files
 
-      return {
-        length: data.length,
-      };
+      const uploadedArtwork = await getTempFileFromS3(input.artworkUploadId);
+      const media = await getTempFileFromS3(input.mediaUploadId);
+
+      // Normalize the image
+
+      const artwork = sharp(uploadedArtwork)
+        .resize({
+          width: 1024,
+          height: 1024,
+          fit: "cover",
+        })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+
+      return {};
     }),
 
-  signedUrl: procedure.query(async () => {
+  signedUrl: procedure.public.mutation(async () => {
     const filename = nanoid();
     const command = new PutObjectCommand({
       Bucket: env.AWS_S3_TEMP_BUCKET_NAME,
