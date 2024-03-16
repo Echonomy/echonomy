@@ -5,7 +5,6 @@ import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
 import { contractAddress } from "~/consts/contracts";
 import { contracts } from "~/contracts";
-import { api } from "~/utils/trpc";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();
@@ -90,21 +89,16 @@ export default function Home() {
           <h3 className="mb-2 mt-3">
             a music distribution platform for independent artists, done right.
           </h3>
-          {!safeAccountClient?.account ? (
-            <>
-              <div className="mt-5 flex w-full justify-center">
-                <DynamicWidget />
-              </div>
-            </>
-          ) : (
-            <div className="text-xs text-neutral-700">
-              <span className="font-bold">Your Safe Account:</span>{" "}
-              {safeAccountClient?.account?.address}
-              <button onClick={createSong} className="ml-2">
-                Create Song
-              </button>
-            </div>
-          )}
+          <div className="mt-5 flex w-full justify-center">
+            <DynamicWidget />
+          </div>
+          <div className="text-xs text-neutral-700">
+            <span className="font-bold">Your Safe Account:</span>{" "}
+            {safeAccountClient?.account?.address}
+            <button onClick={createSong} className="ml-2">
+              Create Song
+            </button>
+          </div>
         </div>
 
         <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">

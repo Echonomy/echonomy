@@ -8,15 +8,13 @@
  */
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { recoverTypedDataAddress } from "viem";
+import { recoverMessageAddress } from "viem";
 import { ZodError } from "zod";
 
 import { db } from "~/server/db";
 import {
   generateSignedProcedurePayload,
-  getTypedDataDomainForChainId,
   signatureProtectedMethods,
-  typedDataTypes,
 } from "~/utils/signature";
 
 /**
@@ -110,8 +108,6 @@ export const procedure = {
       timestamp: new Date(timestamp),
     });
 
-    console.log("Received", { message, signature });
-
     if (!/^0x[0-9a-fA-F]+$/.test(signature)) {
       throw new TRPCError({
         message: "Invalid signature",
@@ -122,13 +118,8 @@ export const procedure = {
     let walletAddress: `0x${string}`;
 
     try {
-      walletAddress = await recoverTypedDataAddress({
-        domain: getTypedDataDomainForChainId(chainId),
-        types: typedDataTypes,
-        primaryType: "Generic",
-        message: {
-          contents: message,
-        },
+      walletAddress = await recoverMessageAddress({
+        message,
         signature: signature as `0x${string}`,
       });
     } catch (err) {

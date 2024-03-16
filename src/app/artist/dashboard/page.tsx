@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Button } from "~/components/ui/button";
+import React from "react";
 import { CreateSongForm } from "~/components/create-song-form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 
 // export const Sidebar = ({ handleOptionSelect }: { handleOptionSelect: (option: string) => void }) => {
 //   const [activeTab, setActiveTab] = useState('uploaded-tunes');
@@ -41,23 +40,27 @@ export const Dashboard = () => {
 
   return (
     <>
-      <h1 className="text-4xl mb-2 text-center mt-7 font-extrabold tracking-tight p-3">
+      <h1 className="mb-2 mt-7 p-3 text-center text-4xl font-extrabold tracking-tight">
         Artist Dashboard
       </h1>
       <div className="">
         <Tabs defaultValue="dash" className="">
-          <div className='flex justify-center'>
+          <div className="flex justify-center">
             <TabsList className="">
               <TabsTrigger value="dash">Uploaded Tunes</TabsTrigger>
               <TabsTrigger value="upload">Create new Tune</TabsTrigger>
             </TabsList>
           </div>
           <div className="px-6">
-            <TabsContent value="dash"><UploadedTunesContent /></TabsContent>
-            <TabsContent value="upload"><CreateSongForm /></TabsContent>
+            <TabsContent value="dash">
+              <UploadedTunesContent />
+            </TabsContent>
+            <TabsContent value="upload">
+              <CreateSongForm />
+            </TabsContent>
           </div>
         </Tabs>
-      </div >
+      </div>
     </>
   );
 };

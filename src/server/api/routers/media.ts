@@ -18,7 +18,7 @@ export const mediaRouter = createTRPCRouter({
   insertMetadata: procedure.private
     .input(
       z.object({
-        songId: z.bigint(),
+        songId: z.string(),
         title: z.string(),
         description: z.string(),
         artworkUploadId: z.string(),
@@ -37,10 +37,16 @@ export const mediaRouter = createTRPCRouter({
         abi: contracts.EchonomySongRegistry,
         address: contractAddress[84532].EchonomySongRegistry,
         functionName: "getSongOwner",
-        args: [input.songId],
+        args: [BigInt(input.songId)],
       });
 
-      if (songOwner !== walletAddress) {
+      const safeOwners = await viem.readContract({
+        abi: contracts.Safe,
+        address: songOwner,
+        functionName: "getOwners",
+      });
+
+      if (!safeOwners.includes(walletAddress)) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "You are not the owner of the song",
