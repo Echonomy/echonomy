@@ -9,7 +9,6 @@ import { contracts } from "~/contracts";
 import { api } from "~/utils/trpc";
 
 export default function Home() {
-  const { data: hello } = api.post.hello.useQuery({ text: "world" });
   const safeAccountClient = useSafeAccountClient();
   const songCards = [
     {
@@ -126,20 +125,5 @@ export default function Home() {
         </div>
       </div>
     </main>
-  );
-}
-
-function CrudShowcase() {
-  const { data: latestPost } = api.post.getLatest.useQuery();
-
-  return (
-    <div className="w-full max-w-xs">
-      {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.name}</p>
-      ) : (
-        <p>You have no posts yet.</p>
-      )}
-      <CreatePost />
-    </div>
   );
 }

@@ -14,7 +14,7 @@ import {
 } from "@aws-sdk/client-s3";
 import { TRPCError } from "@trpc/server";
 
-export const postRouter = createTRPCRouter({
+export const mediaRouter = createTRPCRouter({
   insertMetadata: publicProcedure
     .input(
       z.object({
