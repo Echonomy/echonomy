@@ -54,8 +54,8 @@ export const CreateSongForm = () => {
     },
   });
 
-  const insertMetadataMutation = api.media.insertMetadata.useMutation();
-  const signedUrlQuery = api.media.signedUrl.useMutation();
+  const registerSongMutation = api.songs.register.useMutation();
+  const signedUrlQuery = api.songs.signedUrl.useMutation();
 
   const fields = form.watch();
 
@@ -179,7 +179,7 @@ export const CreateSongForm = () => {
     if (!songId) return;
 
     // Submit the form data and artwork URL to save the metadata for the song
-    await insertMetadataMutation.mutateAsync({
+    await registerSongMutation.mutateAsync({
       songId: songId.toString(),
       title: formValues.title,
       description: formValues.description,

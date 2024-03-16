@@ -16,8 +16,26 @@ import { callFFmpeg } from "~/server/ffmpeg";
 import { uploadToLighthouse } from "~/server/lighthouse";
 import { db } from "~/server/db";
 
-export const mediaRouter = createTRPCRouter({
-  insertMetadata: procedure.private
+export const songsRouter = createTRPCRouter({
+  list: procedure.public.query(() => {
+    return db.song.findMany();
+  }),
+
+  listByArtist: procedure.public
+    .input(
+      z.object({
+        artistWalletAddress: z.string(),
+      }),
+    )
+    .query(({ input }) => {
+      return db.song.findMany({
+        where: {
+          artistWalletAddress: input.artistWalletAddress,
+        },
+      });
+    }),
+
+  register: procedure.private
     .input(
       z.object({
         songId: z.string(),
