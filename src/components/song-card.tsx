@@ -10,7 +10,7 @@ export function SongCard({
   artistName,
   albumCover,
   price,
-  previewSong
+  previewSong,
 }: {
   songName: string;
   artistName: string;
@@ -34,7 +34,7 @@ export function SongCard({
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      void audioRef.current.play();
     }
     setIsPlaying(!isPlaying); // Toggle the state
   };
@@ -45,7 +45,7 @@ export function SongCard({
       audioRef.current.pause();
       audioRef.current.volume = 1.0; // Max volume
       audioRef.current.muted = false;
-      audioRef.current.removeAttribute('src'); // This prevents memory leaks
+      audioRef.current.removeAttribute("src"); // This prevents memory leaks
       audioRef.current.load();
     };
   }, []);
@@ -73,7 +73,11 @@ export function SongCard({
             className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110"
             onClick={togglePlay}
           >
-            {isPlaying ? <StopIcon className="h-10 w-10 p-2 text-white" /> : <PlayIcon className="h-10 w-10 p-2 text-white" />}
+            {isPlaying ? (
+              <StopIcon className="h-10 w-10 p-2 text-white" />
+            ) : (
+              <PlayIcon className="h-10 w-10 p-2 text-white" />
+            )}
           </Button>
           <div>
             <h3 className="mr-4 font-bold">{songName}</h3>

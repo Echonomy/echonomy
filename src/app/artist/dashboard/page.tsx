@@ -1,6 +1,6 @@
 "use client";
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import { useRouter } from "next/router";
+import React, { useState } from "react";
 import { CreateSongForm } from "~/components/create-song-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ArtistSongs from "~/components/artist-songs";
@@ -16,7 +16,7 @@ export const Dashboard = () => {
         Artist Dashboard
       </h1>
       <div className="">
-        <Tabs defaultValue={state ?? "dash"} className="">
+        <Tabs defaultValue={String(state) ?? "dash"} className="">
           <div className="flex justify-center">
             <TabsList className="">
               <TabsTrigger value="dash">Tunes</TabsTrigger>

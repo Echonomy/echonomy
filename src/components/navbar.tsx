@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
 import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
-import * as React from "react"
-import Link from "next/link"
+import * as React from "react";
+import Link from "next/link";
 
-import { cn } from "~/lib/utils"
+import { cn } from "~/lib/utils";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,46 +14,45 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "~/components/ui/navigation-menu"
+} from "~/components/ui/navigation-menu";
 
 const components: { title: string; href: string; description: string }[] = [
   {
     title: "Artist Dashboard",
     href: "/artist/dashboard",
-    description:
-      "Manage your music, royalties & more",
+    description: "Manage your music, royalties & more",
   },
   {
     title: "Upload a Tune",
     href: "/artist/dashboard?state=upload",
-    description:
-      "Create a new tune to be listed on the public marketplace.",
+    description: "Create a new tune to be listed on the public marketplace.",
   },
   {
     title: "Settings",
     href: "/artist/dashboard?state=settings",
-    description:
-      "Update your artist profile.",
+    description: "Update your artist profile.",
   },
-]
+];
 
 export function Nav() {
   const safeAccountClient = useSafeAccountClient();
-  const {
-    handleLogOut,
-    primaryWallet
-  } = useDynamicContext();
+  const { handleLogOut, primaryWallet } = useDynamicContext();
 
   return (
-    <div className="w-full flex items-center justify-between pt-5"> {/* Wrapper to ensure full width and centering */}
+    <div className="flex w-full items-center justify-between pt-5">
+      {" "}
+      {/* Wrapper to ensure full width and centering */}
       <Link href="/" passHref>
-        <div className="font-extrabold tracking-tight ml-5">IndieTunes</div>
+        <div className="ml-5 font-extrabold tracking-tight">IndieTunes</div>
       </Link>
-      <NavigationMenu className="block w-full flex justify-center align-center">
-        <NavigationMenuList className="flex justify-center align-center w-full gap-2">
+      <NavigationMenu className="align-center block flex w-full justify-center">
+        <NavigationMenuList className="align-center flex w-full justify-center gap-2">
           <NavigationMenuItem>
             {/* <Link href="/" passHref> */}
-            <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/" passHref>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              href="/"
+            >
               Discover
             </NavigationMenuLink>
             {/* </Link> */}
@@ -95,7 +94,7 @@ export function Nav() {
         </NavigationMenuList>
       </NavigationMenu>
     </div>
-  )
+  );
 }
 
 const ListItem = React.forwardRef<
@@ -109,7 +108,7 @@ const ListItem = React.forwardRef<
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
+            className,
           )}
           {...props}
         >
@@ -120,6 +119,6 @@ const ListItem = React.forwardRef<
         </a>
       </NavigationMenuLink>
     </li>
-  )
-})
-ListItem.displayName = "ListItem"
+  );
+});
+ListItem.displayName = "ListItem";

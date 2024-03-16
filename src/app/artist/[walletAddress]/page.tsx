@@ -40,6 +40,7 @@ export default function ArtistPage({
                 albumCover={song.artwork}
                 price={song.price}
                 createdAt={song.createdAt}
+                previewSong={song.previewSong}
               />
             ))}
           </div>
