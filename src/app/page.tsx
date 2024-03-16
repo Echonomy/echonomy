@@ -4,7 +4,6 @@ import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
 import { ArtistCard } from "~/components/artist-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { contracts } from "~/contracts";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();
