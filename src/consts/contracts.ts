@@ -2,7 +2,7 @@ import { baseSepolia } from "viem/chains";
 import { type ContractName } from "~/contracts";
 import { type SupportedNetworkId } from "~/utils/networks";
 
-export const contracts: Record<
+export const contractAddress: Record<
   SupportedNetworkId,
   Record<ContractName, `0x${string}`>
 > = {

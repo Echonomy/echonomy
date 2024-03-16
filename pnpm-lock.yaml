@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@dynamic-labs/viem-utils@2.0.0-alpha.17':
+    hash: 2gumxdxni46i6ychkwojc4lf3e
+    path: patches/@dynamic-labs__viem-utils@2.0.0-alpha.17.patch
+
 dependencies:
   '@dynamic-labs/ethereum':
     specifier: ^2.0.0-alpha.17
@@ -1638,7 +1643,7 @@ packages:
       '@dynamic-labs/turnkey': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(eventemitter3@5.0.1)(react-dom@18.2.0)(react@18.2.0)(viem@2.8.9)
       '@dynamic-labs/types': 2.0.0-alpha.17(viem@2.8.9)
       '@dynamic-labs/utils': 2.0.0-alpha.17(viem@2.8.9)
-      '@dynamic-labs/viem-utils': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9)
+      '@dynamic-labs/viem-utils': 2.0.0-alpha.17(patch_hash=2gumxdxni46i6ychkwojc4lf3e)(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9)
       '@dynamic-labs/wallet-book': 2.0.0-alpha.17(react-dom@18.2.0)(react@18.2.0)(viem@2.8.9)
       '@dynamic-labs/wallet-connector-core': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/rpc-providers@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(eventemitter3@5.0.1)
       '@walletconnect/universal-provider': 2.10.6
@@ -1760,7 +1765,7 @@ packages:
       '@dynamic-labs/sdk-api': 0.0.389
       '@dynamic-labs/types': 2.0.0-alpha.17(viem@2.8.9)
       '@dynamic-labs/utils': 2.0.0-alpha.17(viem@2.8.9)
-      '@dynamic-labs/viem-utils': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9)
+      '@dynamic-labs/viem-utils': 2.0.0-alpha.17(patch_hash=2gumxdxni46i6ychkwojc4lf3e)(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9)
       '@dynamic-labs/wallet-book': 2.0.0-alpha.17(react-dom@18.2.0)(react@18.2.0)(viem@2.8.9)
       '@dynamic-labs/wallet-connector-core': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/rpc-providers@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(eventemitter3@5.0.1)
       '@hcaptcha/react-hcaptcha': 1.4.4(react-dom@18.2.0)(react@18.2.0)
@@ -1823,7 +1828,7 @@ packages:
       '@dynamic-labs/solana-utils': 2.0.0-alpha.17(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@solana/web3.js@1.70.1)
       '@dynamic-labs/types': 2.0.0-alpha.17(viem@2.8.9)
       '@dynamic-labs/utils': 2.0.0-alpha.17(viem@2.8.9)
-      '@dynamic-labs/viem-utils': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9)
+      '@dynamic-labs/viem-utils': 2.0.0-alpha.17(patch_hash=2gumxdxni46i6ychkwojc4lf3e)(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9)
       '@dynamic-labs/wallet-book': 2.0.0-alpha.17(react-dom@18.2.0)(react@18.2.0)(viem@2.8.9)
       '@dynamic-labs/wallet-connector-core': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/rpc-providers@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(eventemitter3@5.0.1)
       '@solana/web3.js': 1.70.1
@@ -1864,7 +1869,7 @@ packages:
       viem: 2.8.9(typescript@5.4.2)(zod@3.22.4)
     dev: false
 
-  /@dynamic-labs/viem-utils@2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9):
+  /@dynamic-labs/viem-utils@2.0.0-alpha.17(patch_hash=2gumxdxni46i6ychkwojc4lf3e)(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(viem@2.8.9):
     resolution: {integrity: sha512-LgwVBEvDV4VzOKtIIyuAIpR7dZOBEgzcQj2Lkge3Qu1ugrdNk+XZvyvbX7eFnjgJ37WdQh7ezsG4GC06U+rcwg==}
     peerDependencies:
       '@dynamic-labs/logger': 2.0.0-alpha.17
@@ -1881,6 +1886,7 @@ packages:
       '@dynamic-labs/wallet-connector-core': 2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/rpc-providers@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/utils@2.0.0-alpha.17)(@dynamic-labs/wallet-book@2.0.0-alpha.17)(eventemitter3@5.0.1)
       viem: 2.8.9(typescript@5.4.2)(zod@3.22.4)
     dev: false
+    patched: true
 
   /@dynamic-labs/wagmi-connector@2.0.0-alpha.17(@dynamic-labs/logger@2.0.0-alpha.17)(@dynamic-labs/rpc-providers@2.0.0-alpha.17)(@dynamic-labs/sdk-react-core@2.0.0-alpha.17)(@dynamic-labs/types@2.0.0-alpha.17)(@dynamic-labs/wallet-connector-core@2.0.0-alpha.17)(@wagmi/core@2.6.4)(eventemitter3@5.0.1)(react@18.2.0)(viem@2.8.9)(wagmi@2.5.7):
     resolution: {integrity: sha512-ZSl4PiWEO07JtXu4mPAzv5ni41eytdicfxXzoyS+HTeusmXG8iUtIjoP9icdefzQtNJgskA4SaRsWZIrvP8u6Q==}
