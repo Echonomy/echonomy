@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans ${inter.variable}`}>
-        <div className="max-w-5xl m-auto">
+        <div className="m-auto max-w-5xl">
           <TRPCReactProvider>
             <Nav />
             <DynamicProvider>
