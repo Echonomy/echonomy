@@ -8,8 +8,11 @@
  */
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
-import { recoverMessageAddress } from "viem";
+import { createPublicClient, http, recoverMessageAddress } from "viem";
+import { baseSepolia } from "viem/chains";
 import { ZodError } from "zod";
+import { contracts } from "~/contracts";
+import { env } from "~/env";
 
 import { db } from "~/server/db";
 import {
@@ -94,8 +97,9 @@ export const procedure = {
     const signature = ctx.headers.get("X-Ethereum-Signature");
     const chainId = Number(ctx.headers.get("X-Ethereum-Chain-Id"));
     const timestamp = ctx.headers.get("X-Ethereum-Timestamp");
+    const safeAddress = ctx.headers.get("X-Ethereum-Safe-Address");
 
-    if (!signature || !chainId || !timestamp) {
+    if (!signature || !chainId || !timestamp || !safeAddress) {
       throw new TRPCError({
         message: "No signature found",
         code: "UNAUTHORIZED",
@@ -115,6 +119,13 @@ export const procedure = {
       });
     }
 
+    if (!/^0x[0-9a-fA-F]+$/.test(safeAddress)) {
+      throw new TRPCError({
+        message: "Invalid safe address",
+        code: "UNAUTHORIZED",
+      });
+    }
+
     let walletAddress: `0x${string}`;
 
     try {
@@ -126,6 +137,24 @@ export const procedure = {
       throw new TRPCError({
         message: "Invalid signature",
         code: "UNAUTHORIZED",
+      });
+    }
+
+    const viem = createPublicClient({
+      chain: baseSepolia,
+      transport: http(env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL),
+    });
+
+    const safeOwners = await viem.readContract({
+      abi: contracts.Safe,
+      address: safeAddress as `0x${string}`,
+      functionName: "getOwners",
+    });
+
+    if (!safeOwners.includes(walletAddress)) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "You are not the owner of the song",
       });
     }
 

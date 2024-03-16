@@ -9,7 +9,8 @@ type Paths<T> = T extends object
 
 // Only mutations can be signature protected
 export const signatureProtectedMethods: string[] = [
-  "media.insertMetadata",
+  "artists.update",
+  "songs.register",
 ] satisfies Exclude<
   Paths<AppRouter["_def"]["procedures"]>,
   `${string}._def${string}`
