@@ -1,4 +1,19 @@
 import deterministicJsonStringify from "json-stringify-deterministic";
+import { type AppRouter } from "~/server/api/root";
+
+type Paths<T> = T extends object
+  ? {
+      [K in keyof T]: `${Exclude<K, symbol>}${"" | `.${Paths<T[K]>}`}`;
+    }[keyof T]
+  : never;
+
+// Only mutations can be signature protected
+export const signatureProtectedMethods: string[] = [
+  "media.insertMetadata",
+] satisfies Exclude<
+  Paths<AppRouter["_def"]["procedures"]>,
+  `${string}._def${string}`
+>[];
 
 export function generateSignedProcedurePayload({
   input,

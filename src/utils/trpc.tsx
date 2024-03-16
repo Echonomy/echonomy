@@ -14,6 +14,7 @@ import { type AppRouter } from "~/server/api/root";
 import {
   generateSignedProcedurePayload,
   getTypedDataDomainForChainId,
+  signatureProtectedMethods,
   typedDataTypes,
 } from "./signature";
 import { getSafeAccountClient } from "~/components/safe-account-provider";
@@ -43,7 +44,7 @@ const links = [
       const headers = new Headers();
       headers.set("x-trpc-source", "nextjs-react");
       const mutationOp = opList.find((op) => op.type === "mutation");
-      if (mutationOp) {
+      if (mutationOp && signatureProtectedMethods.includes(mutationOp.path)) {
         const safeAccountClient = getSafeAccountClient();
         if (!safeAccountClient?.account || !safeAccountClient?.chain)
           throw new Error("Cannot call a tRPC mutation without a signature");
@@ -53,7 +54,6 @@ const links = [
           path: mutationOp.path,
           timestamp,
         });
-        console.log("message", message);
 
         const domain = getTypedDataDomainForChainId(safeAccountClient.chain.id);
 
@@ -67,7 +67,6 @@ const links = [
           },
         });
 
-        console.log("Sending", { message, signature });
         headers.set("X-Ethereum-Timestamp", timestamp.toISOString());
         headers.set("X-Ethereum-Signature", signature);
         headers.set(

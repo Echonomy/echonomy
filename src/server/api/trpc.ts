@@ -15,6 +15,7 @@ import { db } from "~/server/db";
 import {
   generateSignedProcedurePayload,
   getTypedDataDomainForChainId,
+  signatureProtectedMethods,
   typedDataTypes,
 } from "~/utils/signature";
 
@@ -87,8 +88,8 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const procedure = t.procedure.use(
-  async ({ ctx, getRawInput, path, type, next }) => {
-    if (type !== "mutation") return next({ ctx });
+  async ({ ctx, getRawInput, path, next }) => {
+    if (!signatureProtectedMethods.includes(path)) return next({ ctx });
 
     const signature = ctx.headers.get("X-Ethereum-Signature");
     const chainId = ctx.headers.get("X-Ethereum-Chain-Id");
