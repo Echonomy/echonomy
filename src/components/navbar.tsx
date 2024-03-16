@@ -37,7 +37,7 @@ const components: { title: string; href: string; description: string }[] = [
 
 export function Nav() {
   return (
-    <div className="w-full flex justify-center"> {/* Wrapper to ensure full width and centering */}
+    <div className="w-full flex justify-center pt-5"> {/* Wrapper to ensure full width and centering */}
 
       <NavigationMenu className="block w-full flex justify-center align-center">
         <NavigationMenuList className="flex justify-center align-center w-full">
