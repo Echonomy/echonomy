@@ -7,6 +7,9 @@ export async function callFFmpeg(input: Uint8Array, ffmpegArguments: string) {
 
   return await fetch(env.FFMPEG_API_URL, {
     method: "POST",
+    headers: {
+      "x-api-key": env.FFMPEG_API_KEY,
+    },
     body,
   })
     .then((res) => res.arrayBuffer())

@@ -10,9 +10,11 @@ import { TRPCError } from "@trpc/server";
 import { createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
 import { contracts } from "~/contracts";
-import { contractAddress } from "~/consts/contracts";
+import { contractAddress as contractAddresses } from "~/consts/contracts";
 import sharp from "sharp";
 import { callFFmpeg } from "~/server/ffmpeg";
+import { uploadToLighthouse } from "~/server/lighthouse";
+import { db } from "~/server/db";
 
 export const mediaRouter = createTRPCRouter({
   insertMetadata: procedure.private
@@ -33,10 +35,24 @@ export const mediaRouter = createTRPCRouter({
         transport: http(env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL),
       });
 
+      const contract = await viem.readContract({
+        abi: contracts.EchonomySongRegistry,
+        address: contractAddresses[84532].EchonomySongRegistry,
+        functionName: "getSong",
+        args: [BigInt(input.songId)],
+      });
+
       const songOwner = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
-        address: contractAddress[84532].EchonomySongRegistry,
+        address: contractAddresses[84532].EchonomySongRegistry,
         functionName: "getSongOwner",
+        args: [BigInt(input.songId)],
+      });
+
+      const price = await viem.readContract({
+        abi: contracts.EchonomySongRegistry,
+        address: contractAddresses[84532].EchonomySongRegistry,
+        functionName: "getSongPrice",
         args: [BigInt(input.songId)],
       });
 
@@ -58,27 +74,69 @@ export const mediaRouter = createTRPCRouter({
       const uploadedArtwork = await getTempFileFromS3(input.artworkUploadId);
       const rawMedia = await getTempFileFromS3(input.mediaUploadId);
 
-      // Normalize the image
+      // Normalize the image, process the media
 
-      const artwork = await sharp(uploadedArtwork)
-        .resize({
-          width: 1024,
-          height: 1024,
-          fit: "cover",
-        })
-        .jpeg({ quality: 80 })
-        .toBuffer();
-
-      const [fullSong, previewSong] = await Promise.all([
-        callFFmpeg(rawMedia, ""),
-        callFFmpeg(rawMedia, "-t 30 -b:a 128k"),
+      const [artwork, fullSong, previewSong] = await Promise.all([
+        sharp(uploadedArtwork)
+          .resize({
+            width: 1024,
+            height: 1024,
+            fit: "cover",
+          })
+          .jpeg({ quality: 80 })
+          .toBuffer(),
+        callFFmpeg(rawMedia, "-f mp3"),
+        callFFmpeg(rawMedia, "-f mp3 -t 30 -b:a 128k"),
       ]);
 
-      return {
-        artworkLength: artwork.length,
-        fullSongLength: fullSong.length,
-        previewSongLength: previewSong.length,
-      };
+      // Encrypt the full song using crypto
+      const key = await crypto.subtle.generateKey(
+        {
+          name: "AES-GCM",
+          length: 256,
+        },
+        true,
+        ["encrypt", "decrypt"],
+      );
+      const kek = await crypto.subtle.importKey(
+        "raw",
+        Buffer.from(env.MEDIA_KEK, "base64"),
+        "AES-GCM",
+        true,
+        ["encrypt", "decrypt"],
+      );
+      const encryptedKey = Buffer.from(
+        await crypto.subtle.encrypt(
+          "AES-GCM",
+          kek,
+          await crypto.subtle.exportKey("raw", key),
+        ),
+      ).toString("base64");
+      const encryptedFullSong = Buffer.from(
+        await crypto.subtle.encrypt("AES-GCM", key, fullSong),
+      );
+
+      // Upload the files
+      const [artworkName, previewSongName, fullSongName] = await Promise.all([
+        uploadToLighthouse(artwork),
+        uploadToLighthouse(previewSong),
+        uploadToLighthouse(encryptedFullSong),
+      ]);
+
+      await db.song.create({
+        data: {
+          id: Number(input.songId),
+          title: input.title,
+          description: input.description,
+          encryptedKey,
+          artwork: artworkName,
+          previewSong: previewSongName,
+          fullSong: fullSongName,
+          price: price.toString(),
+          contractAddress: contract,
+          artistWalletAddress: songOwner,
+        },
+      });
     }),
 
   signedUrl: procedure.public.mutation(async () => {
