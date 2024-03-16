@@ -5,6 +5,7 @@ import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
 import { contractAddress } from "~/consts/contracts";
 import { contracts } from "~/contracts";
+import { api } from "~/utils/trpc";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();

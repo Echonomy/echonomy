@@ -6,11 +6,17 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { recoverTypedDataAddress } from "viem";
 import { ZodError } from "zod";
 
 import { db } from "~/server/db";
+import {
+  generateSignedProcedurePayload,
+  getTypedDataDomainForChainId,
+  typedDataTypes,
+} from "~/utils/signature";
 
 /**
  * 1. CONTEXT
@@ -80,4 +86,54 @@ export const createTRPCRouter = t.router;
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure;
+export const procedure = t.procedure.use(
+  async ({ ctx, getRawInput, path, type, next }) => {
+    if (type !== "mutation") return next({ ctx });
+
+    const signature = ctx.headers.get("X-Ethereum-Signature");
+    const chainId = ctx.headers.get("X-Ethereum-Chain-Id");
+
+    if (!signature || !chainId) {
+      throw new TRPCError({
+        message: "No signature found",
+        code: "UNAUTHORIZED",
+      });
+    }
+
+    const message = generateSignedProcedurePayload({
+      input: await getRawInput(),
+      path,
+      timestamp: new Date(ctx.headers.get("X-Ethereum-Timestamp")!),
+    });
+
+    console.log("Received", { message, signature });
+
+    if (!/^0x[0-9a-fA-F]+$/.test(signature)) {
+      throw new TRPCError({
+        message: "Invalid signature",
+        code: "UNAUTHORIZED",
+      });
+    }
+
+    let walletAddress: `0x${string}`;
+
+    try {
+      walletAddress = await recoverTypedDataAddress({
+        domain: getTypedDataDomainForChainId(Number(chainId)),
+        types: typedDataTypes,
+        primaryType: "Generic",
+        message: {
+          contents: message,
+        },
+        signature: signature as `0x${string}`,
+      });
+    } catch (err) {
+      throw new TRPCError({
+        message: "Invalid signature",
+        code: "UNAUTHORIZED",
+      });
+    }
+
+    return next({ ctx: { ...ctx, walletAddress } });
+  },
+);

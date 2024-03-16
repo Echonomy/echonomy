@@ -1,9 +1,7 @@
 import { z } from "zod";
-import lighthouse from "@lighthouse-web3/sdk";
-import kavach from "@lighthouse-web3/kavach";
 import { nanoid } from "nanoid";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, procedure } from "~/server/api/trpc";
 import { env } from "~/env";
 import { s3 } from "~/server/s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -15,21 +13,26 @@ import {
 import { TRPCError } from "@trpc/server";
 
 export const mediaRouter = createTRPCRouter({
-  insertMetadata: publicProcedure
+  insertMetadata: procedure
     .input(
       z.object({
         uploadId: z.string(),
       }),
     )
     .mutation(async ({ input }) => {
-      const file = await s3.send(
-        new GetObjectCommand({
-          Bucket: env.AWS_S3_TEMP_BUCKET_NAME,
-          Key: input.uploadId,
-        }),
-      );
-
-      if (!file.Body) {
+      let data: Uint8Array = new Uint8Array();
+      try {
+        const file = await s3.send(
+          new GetObjectCommand({
+            Bucket: env.AWS_S3_TEMP_BUCKET_NAME,
+            Key: input.uploadId,
+          }),
+        );
+        if (!file.Body) {
+          throw new Error("Missing body");
+        }
+        data = await file.Body.transformToByteArray();
+      } catch (err) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "File with the given uploadId not found or expired",
@@ -45,11 +48,11 @@ export const mediaRouter = createTRPCRouter({
       );
 
       return {
-        length: (await file.Body.transformToByteArray()).length,
+        length: data.length,
       };
     }),
 
-  signedUrl: publicProcedure.query(async () => {
+  signedUrl: procedure.query(async () => {
     const filename = nanoid();
     const command = new PutObjectCommand({
       Bucket: env.AWS_S3_TEMP_BUCKET_NAME,

@@ -11,19 +11,31 @@ import {
 import { signerToSafeSmartAccount } from "permissionless/accounts";
 import { pimlicoBundlerActions } from "permissionless/actions/pimlico";
 import { createPimlicoPaymasterClient } from "permissionless/clients/pimlico";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { createClient, http } from "viem";
 import { usePublicClient, useWalletClient } from "wagmi";
 import { baseSepolia, sepolia } from "wagmi/chains";
 import { env } from "~/env";
 import { type SupportedNetworkId, supportedNetworks } from "~/utils/networks";
+import { create } from "zustand";
 
 type SafeAccountClient = SmartAccountClient<typeof ENTRYPOINT_ADDRESS_V06>;
+type SafeAccountClientStore = {
+  client: SafeAccountClient | null;
+  setClient: (client: SafeAccountClient | null) => void;
+};
 
-const SafeAccountContext = createContext<SafeAccountClient | null>(null);
+const useSafeAccountClientStore = create<SafeAccountClientStore>()((set) => ({
+  client: null,
+  setClient: (client) => set({ client }),
+}));
 
 export function useSafeAccountClient() {
-  return useContext(SafeAccountContext);
+  return useSafeAccountClientStore(({ client }) => client);
+}
+
+export function getSafeAccountClient() {
+  return useSafeAccountClientStore.getState().client;
 }
 
 const pimlicoNetworkNames: Record<SupportedNetworkId, string> = {
@@ -37,13 +49,13 @@ export function SafeAccountProvider({
 }) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const [smartAccountClient, setSmartAccountClient] =
-    useState<SafeAccountClient | null>(null);
+  const { setClient, client } = useSafeAccountClientStore();
 
   useEffect(() => {
     if (!walletClient || !publicClient) {
       return;
     }
+    setClient(null);
 
     const networkId = walletClient.chain.id;
     const network = supportedNetworks.find((n) => n.id === networkId);
@@ -77,7 +89,7 @@ export function SafeAccountProvider({
       safeVersion: "1.4.1",
       entryPoint: ENTRYPOINT_ADDRESS_V06,
     }).then((account) => {
-      setSmartAccountClient(
+      setClient(
         createSmartAccountClient({
           account,
           entryPoint: ENTRYPOINT_ADDRESS_V06,
@@ -91,11 +103,7 @@ export function SafeAccountProvider({
         }),
       );
     });
-  }, [walletClient, publicClient]);
+  }, [walletClient, publicClient, setClient]);
 
-  return (
-    <SafeAccountContext.Provider value={smartAccountClient}>
-      {children}
-    </SafeAccountContext.Provider>
-  );
+  return <>{children}</>;
 }
