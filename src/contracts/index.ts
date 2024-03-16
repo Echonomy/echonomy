@@ -7,7 +7,7 @@ export const contracts = {
         { name: "name", type: "string", internalType: "string" },
         { name: "price", type: "uint256", internalType: "uint256" },
       ],
-      outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
+      outputs: [],
       stateMutability: "nonpayable",
     },
     {
@@ -67,6 +67,31 @@ export const contracts = {
       inputs: [{ name: "owner", type: "address", internalType: "address" }],
       outputs: [{ name: "", type: "uint256", internalType: "uint256" }],
       stateMutability: "view",
+    },
+    {
+      type: "event",
+      name: "SongCreated",
+      inputs: [
+        {
+          name: "songId",
+          type: "uint256",
+          indexed: true,
+          internalType: "uint256",
+        },
+        {
+          name: "owner",
+          type: "address",
+          indexed: true,
+          internalType: "address",
+        },
+        {
+          name: "price",
+          type: "uint256",
+          indexed: false,
+          internalType: "uint256",
+        },
+      ],
+      anonymous: false,
     },
   ],
   Safe: [

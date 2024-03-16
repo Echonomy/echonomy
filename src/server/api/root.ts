@@ -1,5 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
-import { mediaRouter } from "./routers/media";
+import { songsRouter } from "./routers/songs";
 
 /**
  * This is the primary router for your server.
@@ -7,7 +7,7 @@ import { mediaRouter } from "./routers/media";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  media: mediaRouter,
+  songs: songsRouter,
 });
 
 // export type definition of API

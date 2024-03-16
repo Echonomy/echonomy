@@ -6,32 +6,56 @@ import { api } from "~/utils/trpc";
 import Dropzone from "~/components/ui/dropzone";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage, FormItem } from "~/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormItem,
+} from "~/components/ui/form";
 import { SongCard } from "./song-card";
+import { useSafeAccountClient } from "./safe-account-provider";
+import { contracts } from "~/contracts";
+import { contractAddress } from "~/consts/contracts";
+import { baseSepolia } from "viem/chains";
+import { usePublicClient } from "wagmi";
+import { decodeEventLog } from "viem";
 
 const formSchema = z.object({
   title: z.string().min(2, {
     message: "Title must be at least 2 characters.",
   }),
-  price: z.number().min(0, {
+  description: z.string().min(2, {
+    message: "Description must be at least 2 characters.",
+  }),
+  price: z.number().min(0.1, {
     message: "Price must be at least 0.1 USDC.",
   }),
   artwork: z.string(),
+  media: z.string(),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export const CreateSongForm = () => {
+  const safeAccountClient = useSafeAccountClient();
+  const publicClient = usePublicClient();
   const [artworkFile, setArtworkFile] = useState<string | null>(null);
-  const [insertMetadataData, setInsertMetadataData] = useState(null);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "Title",
+      description: "",
       price: 0,
+      artwork: "",
+      media: "",
     },
   });
 
-  const insertMetadataMutation = api.media.insertMetadata.useMutation();
-  const signedUrlQuery = api.media.signedUrl.useMutation();
+  const registerSongMutation = api.songs.register.useMutation();
+  const signedUrlQuery = api.songs.signedUrl.useMutation();
 
   const fields = form.watch();
 
@@ -72,7 +96,7 @@ export const CreateSongForm = () => {
         form.setValue("artwork", signedUrl.uploadId);
       }
     } else {
-      form.setValue("artwork", null);
+      form.setValue("artwork", "");
       form.setError("artwork", {
         message: "Artwork is required",
         type: "typeError",
@@ -80,111 +104,206 @@ export const CreateSongForm = () => {
     }
   };
 
-  const handleFormSubmit = async () => {
-    // Submit the form data and artwork URL to save the metadata for the song
-    const formData = form.getValues();
-    await insertMetadataMutation.mutateAsync({
-      songId: 123, // Replace with actual song ID
-      title: formData.title,
-      description: "Song description", // Replace with actual description
-      artworkUploadId: formData.artwork,
-      mediaUploadId: "mediaUploadId", // Replace with actual media upload ID
-    });
+  const handleDropMusic = async (acceptedFiles: FileList | null) => {
+    if (acceptedFiles && acceptedFiles.length > 0) {
+      const allowedTypes = [{ name: "mp3", types: ["audio/mp3"] }];
+      const fileType = allowedTypes.find((allowedType) =>
+        allowedType.types.find((type) => type === acceptedFiles?.[0]?.type),
+      );
+      if (!fileType) {
+        form.setValue("media", "");
+        form.setError("media", {
+          message: "File type is not valid",
+          type: "typeError",
+        });
+      } else {
+        const mediaFile = acceptedFiles?.[0];
+        if (!mediaFile) return;
+
+        // Get the signed URL for media upload
+        const signedUrl = await signedUrlQuery.mutateAsync();
+
+        // Upload media to S3 using the signed URL
+        await fetch(signedUrl?.url, {
+          method: "PUT",
+          body: mediaFile,
+          headers: {
+            "Content-Type": mediaFile.type,
+          },
+        });
+
+        // Save the artwork URL in the form data
+        form.setValue("media", signedUrl.uploadId);
+      }
+    } else {
+      form.setValue("media", "");
+      form.setError("media", {
+        message: "Song is required",
+        type: "typeError",
+      });
+    }
   };
 
+  const handleFormSubmit = form.handleSubmit(async (formValues) => {
+    if (!safeAccountClient?.account) return;
+
+    const hash = await safeAccountClient?.writeContract({
+      account: safeAccountClient.account,
+      abi: contracts.EchonomySongRegistry,
+      address: contractAddress[baseSepolia.id].EchonomySongRegistry,
+      functionName: "createSongContract",
+      chain: baseSepolia,
+      args: [
+        fields.title,
+        (BigInt(fields.price * 100) *
+          1n ** BigInt(baseSepolia.nativeCurrency.decimals)) /
+          100n,
+      ],
+    });
+
+    const songId = await publicClient
+      ?.getTransactionReceipt({
+        hash,
+      })
+      .then(
+        (res) =>
+          res.logs.map(({ data, topics }) =>
+            decodeEventLog({
+              abi: contracts.EchonomySongRegistry,
+              data,
+              topics,
+            }),
+          )[0]?.args?.songId,
+      );
+
+    if (!songId) return;
+
+    // Submit the form data and artwork URL to save the metadata for the song
+    await registerSongMutation.mutateAsync({
+      songId: songId.toString(),
+      title: formValues.title,
+      description: formValues.description,
+      artworkUploadId: formValues.artwork,
+      mediaUploadId: formValues.media,
+    });
+  });
+
   return (
-    <Form {...form} onSubmit={handleFormSubmit}>
-      <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
-        Create a new Tune
-      </div>
-      <div className="grid gap-12 md:grid-cols-3">
-        <div className="space-y-4 md:col-span-2">
-          <FormField
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter title" {...field} />
-                </FormControl>
-                <FormDescription>Enter the title of your tune.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price</FormLabel>
-                <FormControl>
-                  <Input type="number" placeholder="Enter price" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Enter the price you want users to pay for this tune in USDC.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="file"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Artwork</FormLabel>
-                <FormControl>
-                  {/* <Input type="file" {...field} /> */}
-                  <Dropzone
-                    {...field}
-                    dropMessage="Drop files or click here"
-                    handleOnDrop={handleDropArtwork}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Upload your tune's artwork in an image file format.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="file"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tune File</FormLabel>
-                <FormControl>
-                  {/* <Input type="file" {...field} /> */}
-                  <Dropzone
-                    {...field}
-                    dropMessage="Drop files or click here"
-                    handleOnDrop={handleDropArtwork}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Upload your tune's mp3 / wav file.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Upload</Button>
+    <form onSubmit={handleFormSubmit}>
+      <Form {...form}>
+        <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
+          Create a new Tune
         </div>
-        <div>
-          <div className="mb-3 text-center font-semibold tracking-tight text-neutral-500">
-            Tune preview
+        <div className="grid gap-12 md:grid-cols-3">
+          <div className="space-y-4 md:col-span-2">
+            <FormField
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter title" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the title of your tune.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter description" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the description of your tune.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="Enter price" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Enter the price you want users to pay for this tune in USDC.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="artwork"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Artwork</FormLabel>
+                  <FormControl>
+                    {/* <Input type="file" {...field} /> */}
+                    <Dropzone
+                      {...field}
+                      dropMessage="Drop files or click here"
+                      handleOnDrop={handleDropArtwork}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Upload your tune&apos;s artwork in an image file format.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="media"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tune File</FormLabel>
+                  <FormControl>
+                    {/* <Input type="file" {...field} /> */}
+                    <Dropzone
+                      {...field}
+                      dropMessage="Drop files or click here"
+                      handleOnDrop={handleDropArtwork}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Upload your tune&apos;s mp3 / wav file.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Upload</Button>
           </div>
-          <SongCard
-            albumCover={artworkFile ? artworkFile : "https://picsum.photos/seed/asdf/200/300"}
-            {...{
-              songName: fields.title || "Title",
-              artistName: "Lucid Waves",
-              price: fields.price,
-              createdAt: "April 1, 2023",
-            }}
-          />
+          <div>
+            <div className="mb-3 text-center font-semibold tracking-tight text-neutral-500">
+              Tune preview
+            </div>
+            <SongCard
+              albumCover={
+                artworkFile
+                  ? artworkFile
+                  : "https://picsum.photos/seed/asdf/200/300"
+              }
+              {...{
+                songName: fields.title || "Title",
+                artistName: "Lucid Waves",
+                price: String(fields.price),
+                createdAt: "April 1, 2023",
+              }}
+            />
+          </div>
         </div>
-      </div>
-    </Form>
+      </Form>
+    </form>
   );
 };
-
