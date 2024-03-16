@@ -1,10 +1,16 @@
 import { db } from "~/server/db";
 import { createTRPCRouter, procedure } from "../trpc";
 import { z } from "zod";
+import { mapArtistMetaToDto } from "~/server/mappers";
+import { selectArtistMeta } from "~/server/select";
 
 export const artistsRouter = createTRPCRouter({
   list: procedure.public.query(() => {
-    return db.artist.findMany();
+    return db.artist
+      .findMany({
+        select: selectArtistMeta,
+      })
+      .then((artists) => artists.map((artist) => mapArtistMetaToDto(artist)));
   }),
 
   update: procedure.private
