@@ -3,6 +3,7 @@ import { type Prisma } from "@prisma/client";
 export const selectArtistMeta = {
   walletAddress: true,
   name: true,
+  bio: true,
   avatar: true,
 } as const satisfies Prisma.ArtistSelect;
 
