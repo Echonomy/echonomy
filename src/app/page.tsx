@@ -1,12 +1,10 @@
 "use client";
 
 import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
-import { CreatePost } from "~/components/create-post";
 import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
 import { contractAddress } from "~/consts/contracts";
 import { contracts } from "~/contracts";
-import { api } from "~/utils/trpc";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();
