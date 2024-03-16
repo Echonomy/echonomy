@@ -4,7 +4,8 @@ import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { SongCard } from "~/components/song-card";
 import { ArtistCard } from "~/components/artist-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { contracts } from "~/contracts";
+import { api } from "~/utils/trpc";
+import { useEffect } from "react";
 
 export default function Home() {
   const safeAccountClient = useSafeAccountClient();
@@ -25,6 +26,10 @@ export default function Home() {
     },
     // Add more dummy artists as needed
   ];
+
+  const songsQuery = api.songs.list.useQuery();
+
+  console.log({ songsQuery });
 
   const songCards = [
     {
@@ -122,14 +127,18 @@ export default function Home() {
                 Recently uploaded
               </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {songCards.map((song, i) => (
+                {!songsQuery || !songsQuery.data && (
+                  <div>Loading...</div>
+                )}
+                {songsQuery?.data?.map((song, i) => (
                   <SongCard
                     key={i}
-                    songName={song.songName}
-                    artistName={song.artistName}
-                    albumCover={song.albumCover}
+                    songName={song.title}
+                    artistName={song.artistWalletAddress}
+                    albumCover={song.artwork}
                     price={song.price}
                     createdAt={song.createdAt}
+                    address={song.artistWalletAddress}
                   />
                 ))}
               </div>

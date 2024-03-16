@@ -49,11 +49,11 @@ export function Nav() {
       <NavigationMenu className="block w-full flex justify-center align-center">
         <NavigationMenuList className="flex justify-center align-center w-full gap-2">
           <NavigationMenuItem>
-            <Link href="/" passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Discover
-              </NavigationMenuLink>
-            </Link>
+            {/* <Link href="/" passHref> */}
+            <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/" passHref>
+              Discover
+            </NavigationMenuLink>
+            {/* </Link> */}
           </NavigationMenuItem>
 
           {!primaryWallet && !safeAccountClient?.account ? (
