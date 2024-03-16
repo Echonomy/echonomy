@@ -18,7 +18,15 @@ import { db } from "~/server/db";
 
 export const songsRouter = createTRPCRouter({
   list: procedure.public.query(() => {
-    return db.song.findMany();
+    return db.song.findMany().then((songs) =>
+      songs.map((song) => ({
+        ...song,
+        artwork: "https://gateway.lighthouse.storage/ipfs/" + song.artwork,
+        previewSong:
+          "https://gateway.lighthouse.storage/ipfs/" + song.previewSong,
+        fullSong: "https://gateway.lighthouse.storage/ipfs/" + song.fullSong,
+      })),
+    );
   }),
 
   listByArtist: procedure.public
@@ -28,11 +36,22 @@ export const songsRouter = createTRPCRouter({
       }),
     )
     .query(({ input }) => {
-      return db.song.findMany({
-        where: {
-          artistWalletAddress: input.artistWalletAddress,
-        },
-      });
+      return db.song
+        .findMany({
+          where: {
+            artistWalletAddress: input.artistWalletAddress,
+          },
+        })
+        .then((songs) =>
+          songs.map((song) => ({
+            ...song,
+            artwork: "https://gateway.lighthouse.storage/ipfs/" + song.artwork,
+            previewSong:
+              "https://gateway.lighthouse.storage/ipfs/" + song.previewSong,
+            fullSong:
+              "https://gateway.lighthouse.storage/ipfs/" + song.fullSong,
+          })),
+        );
     }),
 
   register: procedure.private
