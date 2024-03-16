@@ -1,23 +1,13 @@
-"use client";
-
-import {
-  Form,
-  FormField,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormItem,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import Dropzone from "~/components/ui/dropzone";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { SongCard } from "./song-card";
 import { api } from "~/utils/trpc";
-import { useState } from "react";
+import Dropzone from "~/components/ui/dropzone";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage, FormItem } from "~/components/ui/form";
+import { SongCard } from "./song-card";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -62,10 +52,22 @@ export const CreateSongForm = () => {
       } else {
         const artworkFile = acceptedFiles?.[0];
         if (!artworkFile) return;
-        const x = await insertMetadataMutation.mutateAsync({
-          uploadId: signedUrlQuery.data?.uploadId,
+
+        // Get the signed URL for artwork upload
+        const signedUrl = await signedUrlQuery.mutateAsync();
+
+
+        // Upload artwork to S3 using the signed URL
+        await fetch(signedUrl?.url, {
+          method: "PUT",
+          body: artworkFile,
+          headers: {
+            "Content-Type": artworkFile.type,
+          },
         });
-        console.log({ x });
+
+        // Save the artwork URL in the form data
+        form.setValue("artwork", signedUrl.url);
       }
     } else {
       form.setValue("artwork", null);
@@ -76,8 +78,20 @@ export const CreateSongForm = () => {
     }
   };
 
+  const handleFormSubmit = async () => {
+    // Submit the form data and artwork URL to save the metadata for the song
+    const formData = form.getValues();
+    await insertMetadataMutation.mutateAsync({
+      songId: 123, // Replace with actual song ID
+      title: formData.title,
+      description: "Song description", // Replace with actual description
+      artworkUploadId: formData.artwork,
+      mediaUploadId: "mediaUploadId", // Replace with actual media upload ID
+    });
+  };
+
   return (
-    <Form {...form}>
+    <Form {...form} onSubmit={handleFormSubmit}>
       <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
         Create a new Tune
       </div>
@@ -151,3 +165,4 @@ export const CreateSongForm = () => {
     </Form>
   );
 };
+
