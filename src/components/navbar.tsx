@@ -16,22 +16,16 @@ import {
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
+    title: "Artist Dashboard",
+    href: "/artist/dashboard",
     description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+      "Manage your music, royalties & more",
   },
   {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
+    title: "Upload a Tune",
+    href: "/artist/create-tune",
     description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+      "Create a new tune to be listed on the public marketplace.",
   },
 ]
 
