@@ -59,11 +59,6 @@ const links = [
           message,
         });
 
-        const typedDataAddress = await recoverMessageAddress({
-          message,
-          signature,
-        });
-
         headers.set("X-Ethereum-Timestamp", timestamp.toISOString());
         headers.set("X-Ethereum-Signature", signature);
         headers.set(

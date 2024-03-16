@@ -46,21 +46,21 @@ export const mediaRouter = createTRPCRouter({
       const contract = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
         address: contractAddresses[84532].EchonomySongRegistry,
-        functionName: "getSong",
+        functionName: "song",
         args: [BigInt(input.songId)],
       });
 
       const songOwner = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
         address: contractAddresses[84532].EchonomySongRegistry,
-        functionName: "getSongOwner",
+        functionName: "songOwner",
         args: [BigInt(input.songId)],
       });
 
       const price = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
         address: contractAddresses[84532].EchonomySongRegistry,
-        functionName: "getSongPrice",
+        functionName: "songPrice",
         args: [BigInt(input.songId)],
       });
 

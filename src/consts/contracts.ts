@@ -4,9 +4,9 @@ import { type SupportedNetworkId } from "~/utils/networks";
 
 export const contractAddress: Record<
   SupportedNetworkId,
-  Record<ContractName, `0x${string}`>
+  Record<Exclude<ContractName, "Safe">, `0x${string}`>
 > = {
   [baseSepolia.id]: {
-    EchonomySongRegistry: "0x32599235b17F6aA65DBb6AEb0aC48fa182cBd1bd",
+    EchonomySongRegistry: "0x92d0Ff5503A936B6Fb6c1eb09BF403eA3dB448f1",
   },
 };
