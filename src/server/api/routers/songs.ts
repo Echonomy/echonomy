@@ -194,7 +194,17 @@ export const songsRouter = createTRPCRouter({
           fullSong: fullSongName,
           price: price.toString(),
           contractAddress: contract,
-          artistWalletAddress: songOwner,
+          artist: {
+            connectOrCreate: {
+              where: {
+                walletAddress: songOwner,
+              },
+              create: {
+                walletAddress: songOwner,
+                name: "Unknown",
+              },
+            },
+          },
         },
       });
     }),
