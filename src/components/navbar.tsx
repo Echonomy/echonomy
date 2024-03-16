@@ -45,7 +45,10 @@ export function Nav() {
   } = useDynamicContext();
 
   return (
-    <div className="w-full flex items-center justify-center pt-5"> {/* Wrapper to ensure full width and centering */}
+    <div className="w-full flex items-center justify-between pt-5"> {/* Wrapper to ensure full width and centering */}
+      <Link href="/" passHref>
+        <div className="font-extrabold tracking-tight ml-5">IndieTunes</div>
+      </Link>
       <NavigationMenu className="block w-full flex justify-center align-center">
         <NavigationMenuList className="flex justify-center align-center w-full gap-2">
           <NavigationMenuItem>

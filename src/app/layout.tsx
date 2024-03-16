@@ -31,6 +31,7 @@ export default function RootLayout({
           <TRPCReactProvider>
             <DynamicProvider>
               <Nav />
+              <hr className="mt-4" />
               <SafeAccountProvider>{children}</SafeAccountProvider>
             </DynamicProvider>
           </TRPCReactProvider>

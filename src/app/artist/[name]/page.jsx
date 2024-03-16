@@ -78,13 +78,13 @@ export const ArtistPage = () => {
       <h1 className="text-4xl mb-2 text-center mt-7 font-extrabold tracking-tight p-3">
         Artist Page
       </h1>
-      <div className="grid gap-12 md:grid-cols-4 pt-7">
-        <div className="md:col-span-1" style={{ borderRight: 1 }}>
+      <div className="grid gap-12 md:grid-cols-3 pt-7 px-4">
+        <div className="md:col-span-1">
           <ArtistCard {...dummyArtists} />
         </div>
         <div className="md:col-span-2">
           <h1 className="text-2xl font-semibold tracking-tight">
-            {dummyArtists.name} tunes:
+            {dummyArtists.name}s tunes:
           </h1>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 mt-4">
 

@@ -24,83 +24,10 @@ export default function Home() {
       bio: "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       address: "0x123"
     },
-    // Add more dummy artists as needed
   ];
 
   const songsQuery = api.songs.list.useQuery();
-
-  console.log({ songsQuery });
-
-  const songCards = [
-    {
-      songName: "Dreamer",
-      artistName: "Lucid Waves",
-      albumCover: "https://picsum.photos/seed/asdf/200/300",
-      price: "$0.99",
-      createdAt: "April 1, 2023",
-    },
-    {
-      songName: "Nightfall",
-      artistName: "Eclipse",
-      albumCover: "https://picsum.photos/seed/asdg/200/300",
-      price: "$1.29",
-      createdAt: "March 28, 2023",
-    },
-    {
-      songName: "Retrograde",
-      artistName: "Voyager IV",
-      albumCover: "https://picsum.photos/seed/ashd/200/300",
-      price: "$0.79",
-      createdAt: "March 15, 2023",
-    },
-    {
-      songName: "Horizon",
-      artistName: "Skyline",
-      albumCover: "https://picsum.photos/seed/agsd/200/300",
-      price: "$1.49",
-      createdAt: "April 5, 2023",
-    },
-    {
-      songName: "Ephemeral",
-      artistName: "Aether",
-      albumCover: "https://picsum.photos/seed/aagsd/200/300",
-      price: "$1.09",
-      createdAt: "February 20, 2023",
-    },
-    {
-      songName: "Silhouettes",
-      artistName: "Shadowplay",
-      albumCover: "https://picsum.photos/seed/agasdsd/200/300",
-      price: "$0.89",
-      createdAt: "January 10, 2023",
-    },
-    {
-      songName: "Cascade",
-      artistName: "Waterfall",
-      albumCover: "https://picsum.photos/seed/asad/200/300",
-      price: "$1.19",
-      createdAt: "March 22, 2023",
-    },
-    {
-      songName: "Whispers",
-      artistName: "Gentle Breeze",
-      albumCover: "https://picsum.photos/seed/asggd/200/300",
-      price: "$0.99",
-      createdAt: "April 2, 2023",
-    },
-  ];
-
-  // const createSong = () => {
-  //   if (!safeAccountClient?.chain || !safeAccountClient?.account) return;
-  //   void safeAccountClient.writeContract({
-  //     address: contractAddress[84532].EchonomySongRegistry,
-  //     account: safeAccountClient.account,
-  //     chain: safeAccountClient.chain,
-  //     abi: contracts.EchonomySongRegistry,
-  //     functionName: "createSongContract",
-  //     args: ["Song Name", 1000000000000000000n],
-  //   });
-  // };
+  const artistsQuery = api.artists.list.useQuery();
 
   return (
     <main className="flex flex-col justify-center text-white">
@@ -121,7 +48,7 @@ export default function Home() {
             </TabsList>
           </div>
 
-          <div className="px-6">
+          <div className="px-6 mt-10">
             <TabsContent value="tunes">
               <div className="text-md my-3 text-2xl font-semibold tracking-tight">
                 Recently uploaded
@@ -133,6 +60,7 @@ export default function Home() {
                 {songsQuery?.data?.map((song, i) => (
                   <SongCard
                     key={i}
+                    previewSong={song.previewSong}
                     songName={song.title}
                     artistName={song.artistWalletAddress}
                     albumCover={song.artwork}
