@@ -36,7 +36,13 @@ export const EditProfileForm = () => {
       avatar: "",
     },
   });
+
   const signedUrlMutation = api.songs.signedUrl.useMutation();
+  const wA = safeAccountClient?.account?.address ?? "";
+
+  // Get artist data for connected wallet
+  const artistData = api.artists.get.useQuery({ walletAddress: wA });
+  console.log({ artistData: artistData.data, wA })
 
   const fields = form.watch();
 
@@ -88,6 +94,10 @@ export const EditProfileForm = () => {
   const handleFormSubmit = form.handleSubmit(async () => {
     // Submit the form data and artwork URL to save the metadata for the song
     const formData = form.getValues();
+    await updateArtistData.mutateAsync({
+      name: fields.name,
+      bio: fields.bio
+    });
   });
 
   return (
@@ -133,7 +143,6 @@ export const EditProfileForm = () => {
                 <FormItem>
                   <FormLabel>Profile Picture</FormLabel>
                   <FormControl>
-                    {/* <Input type="file" {...field} /> */}
                     <Dropzone
                       {...field}
                       dropMessage="Drop files or click here"

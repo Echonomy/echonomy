@@ -42,6 +42,8 @@ export const artistsRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().optional(),
+        bio: z.string().optional(),
+        avatar: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {

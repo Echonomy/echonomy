@@ -2,12 +2,41 @@
 
 import { SongCard } from "~/components/song-card";
 import { ArtistCard } from "~/components/artist-card";
+import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { api } from "~/utils/trpc";
+import { contractAddress } from "~/consts/contracts";
+import { contracts } from "~/contracts";
+import { useEffect } from "react";
 
 export default function Home() {
+  const safeAccountClient = useSafeAccountClient();
+
   const songsQuery = api.songs.list.useQuery();
   const artistsQuery = api.artists.list.useQuery();
+
+  // test whether things work v
+
+  // const createSong = () => {
+  //   console.log(54);
+  //   if (!safeAccountClient?.chain || !safeAccountClient?.account) return;
+  //   console.log(123)
+  //   void safeAccountClient.writeContract({
+  //     address: contractAddress[84532].EchonomySongRegistry,
+  //     account: safeAccountClient.account,
+  //     chain: safeAccountClient.chain,
+  //     abi: contracts.EchonomySongRegistry,
+  //     functionName: "createSongContract",
+  //     args: ["Song Name", 1000000000000000000n],
+  //   });
+  //   console.log(321)
+  // };
+
+  // useEffect(() => {
+  //   if (safeAccountClient)
+  //     createSong();
+  // }, [safeAccountClient])
+
 
   return (
     <main className="flex flex-col justify-center text-white">

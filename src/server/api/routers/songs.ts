@@ -44,6 +44,30 @@ export const songsRouter = createTRPCRouter({
         .then((songs) => songs.map(mapSongMetaToDto));
     }),
 
+  get: procedure.public
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const song = await db.song.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: selectSongMeta,
+      });
+
+      if (!song) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Song not found",
+        });
+      }
+
+      return mapArtistMetaToDto(artist);
+    }),
+
   register: procedure.private
     .input(
       z.object({
