@@ -33,7 +33,9 @@ export function SongCard({
     height: 250,
   };
 
-  const togglePlay = () => {
+  const togglePlay = (e) => {
+    e.preventDefault(true);
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {

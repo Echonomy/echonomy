@@ -122,8 +122,8 @@ export default function ArtistPage({
             previewSong={songData.data.previewSong}
           />
           {songData.data.artist?.name && (
-            <Link href="/" passHref>
-              <div className="mt-5 w-full text-center text-xs text-neutral-500 hover:underline">
+            <Link href={`/artist/${songData.data.artist?.walletAddress}`} passHref>
+              <div className="mt-5 text-neutral-500 text-xs hover:underline text-center w-full">
                 View other tunes by {songData.data.artist?.name}
               </div>
             </Link>
@@ -144,7 +144,7 @@ export default function ArtistPage({
             </div>
           )}
           <Link href="/" className="mt-5 text-xs hover:underline">
-            See all NFTs
+            Discover more NFTs
           </Link>
         </div>
       </div>
