@@ -44,6 +44,7 @@ export const CreateSongForm = () => {
   const safeAccountClient = useSafeAccountClient();
   const publicClient = usePublicClient();
   const [artworkFile, setArtworkFile] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean | null>(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -61,6 +62,7 @@ export const CreateSongForm = () => {
   const fields = form.watch();
 
   const handleDropArtwork = async (acceptedFiles: FileList | null) => {
+    setIsLoading(true);
     if (acceptedFiles && acceptedFiles.length > 0) {
       const allowedTypes = [
         { name: "jpg", types: ["image/jpeg"] },
@@ -77,7 +79,7 @@ export const CreateSongForm = () => {
         });
       } else {
         const artworkFile = acceptedFiles?.[0];
-        if (!artworkFile) return;
+        if (!artworkFile) { setIsLoading(false); return; }
         const albumCover = URL.createObjectURL(artworkFile); // Convert the File object to a data URL
         setArtworkFile(albumCover);
 
@@ -95,8 +97,10 @@ export const CreateSongForm = () => {
 
         // Save the artwork URL in the form data
         form.setValue("artwork", signedUrl.uploadId);
+        setIsLoading(false);
       }
     } else {
+      setIsLoading(false);
       form.setValue("artwork", "");
       form.setError("artwork", {
         message: "Artwork is required",
@@ -118,6 +122,7 @@ export const CreateSongForm = () => {
           type: "typeError",
         });
       } else {
+        setIsLoading(true);
         const mediaFile = acceptedFiles?.[0];
         if (!mediaFile) return;
 
@@ -135,8 +140,10 @@ export const CreateSongForm = () => {
 
         // Save the artwork URL in the form data
         form.setValue("media", signedUrl.uploadId);
+        setIsLoading(false);
       }
     } else {
+      setIsLoading(false);
       form.setValue("media", "");
       form.setError("media", {
         message: "Song is required",
@@ -144,6 +151,16 @@ export const CreateSongForm = () => {
       });
     }
   };
+
+  const priceParts = fields.price.split('.'); // Split the input into whole and fractional parts
+  const wholePart = priceParts[0];
+  const fractionalPart = priceParts[1] || '0';
+  const decimals = safeAccountClient?.chain?.nativeCurrency.decimals ?? 18;
+
+  // Create a string representing the number in the smallest units, padded with zeros as necessary
+  const paddedFraction = fractionalPart.padEnd(decimals ?? 0, '0').substring(0, decimals);
+  const combinedPrice = wholePart + paddedFraction; // Combine whole and fractional parts
+  const convertedPrice = BigInt(combinedPrice); // Convert to BigInt
 
   const handleFormSubmit = form.handleSubmit(async (formValues) => {
     if (!safeAccountClient?.account || !safeAccountClient.chain) return;
@@ -156,8 +173,8 @@ export const CreateSongForm = () => {
       chain: safeAccountClient.chain,
       args: [
         (BigInt(Number(fields.price) * 100) *
-          1n ** BigInt(safeAccountClient.chain.nativeCurrency.decimals)) /
-          100n,
+          (10n ** BigInt(safeAccountClient.chain.nativeCurrency.decimals))) /
+        100n,
       ],
     });
 
@@ -224,7 +241,7 @@ export const CreateSongForm = () => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="Enter price" {...field} />
+                    <Input type="number" step="0.1" placeholder="Enter price" {...field} />
                   </FormControl>
                   <FormDescription>
                     Enter the price you want users to pay for this tune in USDC.
@@ -240,11 +257,13 @@ export const CreateSongForm = () => {
                   <FormLabel>Artwork</FormLabel>
                   <FormControl>
                     {/* <Input type="file" {...field} /> */}
-                    <Dropzone
-                      {...field}
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropArtwork}
-                    />
+                    {
+                      artworkFile ? <div className="text-green-300">Successfully Uploaded.</div> : <Dropzone
+                        {...field}
+                        dropMessage="Drop files or click here"
+                        handleOnDrop={handleDropArtwork}
+                      />
+                    }
                   </FormControl>
                   <FormDescription>
                     Upload your tune&apos;s artwork in an image file format.
@@ -260,11 +279,14 @@ export const CreateSongForm = () => {
                   <FormLabel>Tune File</FormLabel>
                   <FormControl>
                     {/* <Input type="file" {...field} /> */}
-                    <Dropzone
-                      {...field}
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropMusic}
-                    />
+                    {
+                      fields.media ? <div className="text-green-300">Successfully Uploaded.</div> :
+                        <Dropzone
+                          {...field}
+                          dropMessage="Drop files or click here"
+                          handleOnDrop={handleDropMusic}
+                        />
+                    }
                   </FormControl>
                   <FormDescription>
                     Upload your tune&apos;s mp3 / wav file.
@@ -273,7 +295,8 @@ export const CreateSongForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Upload</Button>
+            <Button type="submit" disabled={isLoading}>Upload</Button>
+            <br />
           </div>
           <div>
             <div className="mb-3 text-center font-semibold tracking-tight text-neutral-500">
@@ -283,12 +306,12 @@ export const CreateSongForm = () => {
               albumCover={
                 artworkFile
                   ? artworkFile
-                  : "https://picsum.photos/seed/asdf/200/300"
+                  : "https://pbs.twimg.com/profile_images/1467601380567359498/oKcnQo_S_400x400.jpg"
               }
               {...{
                 songName: fields.title || "Title",
                 artistName: "Lucid Waves",
-                price: String(fields.price),
+                price: convertedPrice,
                 createdAt: new Date(),
               }}
             />
