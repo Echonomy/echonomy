@@ -5,7 +5,7 @@ import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { PlayIcon, StopIcon } from "@radix-ui/react-icons";
 import Tilt from "react-parallax-tilt";
-import { formatEther } from "viem";
+import { formatEther, formatUnits } from "viem";
 import Link from "next/link";
 
 export function SongCard({
@@ -28,11 +28,10 @@ export function SongCard({
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       audioRef.current = new Audio(previewSong);
     }
   }, [previewSong]); // Reinitialize if previewSong changes
-
 
   // Inline style for background image
   const albumCoverStyle = {
@@ -105,7 +104,7 @@ export function SongCard({
               <h3 className="mr-4 font-bold">{songName}</h3>
               <p className="text-sm">{artistName.slice(0, 16)}</p>
               <p className="mt-1 text-sm">
-                {formatEther(BigInt(price))}{" "}
+                {formatUnits(BigInt(price), 6)}{" "}
                 <span className="text-xs">USDC</span>
               </p>
             </div>
