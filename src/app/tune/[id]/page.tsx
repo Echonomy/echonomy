@@ -41,7 +41,7 @@ export default function ArtistPage({
             previewSong={songData.data.previewSong}
           />
           {songData.data.artist?.name && (
-            <Link href="/" passHref>
+            <Link href={`/artist/${songData.data.artist?.walletAddress}`} passHref>
               <div className="mt-5 text-neutral-500 text-xs hover:underline text-center w-full">
                 View other tunes by {songData.data.artist?.name}
               </div>
@@ -51,7 +51,7 @@ export default function ArtistPage({
         <div className="md:col-span-2 flex flex-col justify-center items-center">
           <Button type="submit">Buy this NFT</Button>
           <Link href="/" className="mt-5 text-xs hover:underline">
-            See all NFTs
+            Discover more NFTs
           </Link>
         </div>
       </div>
