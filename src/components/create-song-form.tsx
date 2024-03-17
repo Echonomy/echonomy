@@ -203,7 +203,7 @@ export const CreateSongForm = () => {
       },
       {
         onSettled: () => {
-          utils.invalidate();
+          void utils.invalidate();
           router.replace("/");
         },
       },
