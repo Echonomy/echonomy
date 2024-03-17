@@ -13,6 +13,8 @@ export const signatureProtectedMethods: string[] = [
   "songs.register",
   "songs.decryptionKey",
   "artists.getTheBlueCheckmarkSwag",
+  "fanTokens.deploy",
+  "fanTokens.mint",
 ] satisfies Exclude<
   Paths<AppRouter["_def"]["procedures"]>,
   `${string}._def${string}`
