@@ -26,6 +26,7 @@ export default function ArtistSongs({
           {songs.data?.map((song, i) => (
             <SongCard
               key={i}
+              id={song.id}
               songName={song.title}
               artistName={song.artist.name}
               albumCover={song.artwork}

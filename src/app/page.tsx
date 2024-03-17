@@ -67,6 +67,7 @@ export default function Home() {
                 {songsQuery?.data?.map((song, i) => (
                   <SongCard
                     key={i}
+                    id={song.id}
                     previewSong={song.previewSong}
                     songName={song.title}
                     artistName={song.artistWalletAddress}

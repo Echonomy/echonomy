@@ -1,49 +1,58 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
-import { ArtistCard } from "~/components/artist-card";
+import { Button } from "~/components/ui/button";
 import { SongCard } from "~/components/song-card";
 import { api } from "~/utils/trpc";
 
 export default function ArtistPage({
-  params: { walletAddress },
+  params: { id },
 }: {
-  params: { walletAddress: string };
+  params: { id: string };
 }) {
-  const artist = api.artists.get.useQuery({
-    walletAddress,
+  const songData = api.songs.get.useQuery({
+    id: Number(id)
   });
 
-  const artistSongsQuery = api.songs.listByArtist.useQuery({
-    artistWalletAddress: walletAddress,
-  });
+  console.log({ songData, id })
+
+  // const artist = api.artists.get.useQuery({
+  //   walletAddress
+  // });
+
+  // const artistSongsQuery = api.songs.listByArtist.useQuery({
+  //   artistWalletAddress: walletAddress,
+  // });
+  if (!songData || !songData.data)
+    return <div>Loading...</div>
 
   return (
     <>
-      <h1 className="mb-2 mt-7 p-3 text-center text-4xl font-extrabold tracking-tight">
-        Artist Page
-      </h1>
-      <div className="grid gap-12 pt-7 md:grid-cols-4">
-        <div className="md:col-span-1" style={{ borderRight: 1 }}>
-          {artist.data && <ArtistCard {...artist.data} />}
+      <div className="grid md:grid-cols-3 gap-8 mt-16">
+        <div className="md:col-span-1">
+          <SongCard
+            id={songData.data.id}
+            songName={songData.data.title}
+            artistName={songData.data.artist?.name}
+            albumCover={songData.data.artwork}
+            price={songData.data.price}
+            createdAt={songData.data.createdAt}
+            previewSong={songData.data.previewSong}
+          />
+          {songData.data.artist?.name && (
+            <Link href="/" passHref>
+              <div className="mt-5 text-neutral-500 text-xs hover:underline text-center w-full">
+                View other tunes by {songData.data.artist?.name}
+              </div>
+            </Link>
+          )}
         </div>
-        <div className="md:col-span-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            {artist.data?.name} tunes:
-          </h1>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
-            {artistSongsQuery.data?.map((song, i) => (
-              <SongCard
-                key={i}
-                songName={song.title}
-                artistName={song.artist?.name}
-                albumCover={song.artwork}
-                price={song.price}
-                createdAt={song.createdAt}
-                previewSong={song.previewSong}
-              />
-            ))}
-          </div>
+        <div className="md:col-span-2 flex flex-col justify-center items-center">
+          <Button type="submit">Buy this NFT</Button>
+          <Link href="/" className="mt-5 text-xs hover:underline">
+            See all NFTs
+          </Link>
         </div>
       </div>
     </>

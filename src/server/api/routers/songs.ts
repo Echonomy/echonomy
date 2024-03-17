@@ -65,7 +65,7 @@ export const songsRouter = createTRPCRouter({
         });
       }
 
-      return mapArtistMetaToDto(artist);
+      return mapSongMetaToDto(song);
     }),
 
   register: procedure.private
@@ -79,7 +79,6 @@ export const songsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx: { chainId, walletAddress }, input }) => {
-      console.log({ walletAddress, input });
       const id = nanoid();
 
       const log = (message: string) => {
