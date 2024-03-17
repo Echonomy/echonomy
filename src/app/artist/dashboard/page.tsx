@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from 'react';
 import { CreateSongForm } from "~/components/create-song-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ArtistSongs from "~/components/artist-songs";
@@ -12,7 +12,7 @@ import { Button } from "~/components/ui/button";
 import { api } from "~/utils/trpc";
 import { env } from "~/env";
 
-export default function Dashboard() {
+export default function ArtistDashboardPage() {
   const searchParams = useSearchParams();
   const safeAccountClient = useSafeAccountClient();
   const verifyMutation = api.artists.getTheBlueCheckmarkSwag.useMutation();
@@ -83,13 +83,3 @@ export default function Dashboard() {
     </>
   );
 }
-
-const UploadedTunesContent = () => {
-  // Logic for displaying uploaded tunes content
-  return <div>Uploaded Tunes Content</div>;
-};
-
-const UploadNewTuneContent = () => {
-  // Logic for displaying upload new tune content
-  return <div>Upload New Tune</div>;
-};

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
 import { cn } from "~/lib/utils";
-import React, { ChangeEvent, useRef } from "react";
+import React, { type ChangeEvent, useRef } from "react";
 
 interface DropzoneProps
   extends Omit<
