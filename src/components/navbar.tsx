@@ -81,7 +81,7 @@ export function Nav() {
                 <NavigationMenuItem>
                   <Link href="/profile" passHref>
                     <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                      My Profile
+                      My Collection
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>

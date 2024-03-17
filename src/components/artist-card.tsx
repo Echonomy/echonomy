@@ -16,7 +16,7 @@ export function ArtistCard({
 }) {
   // Inline style for background image
   const albumCoverStyle = {
-    backgroundImage: `url(${avatar})`,
+    backgroundImage: `url(${avatar ?? `https://api.cloudnouns.com/v1/pfp?text=${walletAddress}`})`,
     backgroundSize: "cover", // Cover the entire div
     backgroundPosition: "center", // Center the background image
     height: 250,
@@ -39,21 +39,11 @@ export function ArtistCard({
           ></div>
           {/* Text content at the bottom */}
           <CardContent className="relative p-4">
-            {/* <Button
-            variant="outline"
-            className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2  transition-all hover:scale-110"
-          >
-            <PlayIcon className="h-10 w-10 p-2 text-white" />
-          </Button> */}
             <div className="">
               <h3 className="mr-4 font-bold">{name}</h3>
               <p className="text-sm">{bio}</p>
-              {/* <p className="text-sm mt-1">{price} <span className="text-xs">USDC</span></p> */}
             </div>
           </CardContent>
-          {/* <CardFooter className="px-4 pb-4">
-        <Button>Buy</Button>
-      </CardFooter> */}
         </Card>
       </Tilt>
     </Link>

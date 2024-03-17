@@ -16,8 +16,9 @@ import { env } from "~/env";
 export default function ArtistDashboardPage() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [amount, setAmount] = useState("");
-  const [recipientAddress, setRecipientAddress] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [amount, setAmount] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
   const safeAccountClient = useSafeAccountClient();
   const verifyMutation = api.artists.getTheBlueCheckmarkSwag.useMutation();
   const { data: artist } = api.artists.get.useQuery(
@@ -39,6 +40,7 @@ export default function ArtistDashboardPage() {
       amount: Number(amount),
       to: recipientAddress,
     });
+    setIsSuccess(true);
     setIsLoading(false);
   };
 
@@ -79,13 +81,13 @@ export default function ArtistDashboardPage() {
                     placeholder="Token Amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="text-input"
+                    className="text-input text-white"
                   />
                   <Input
                     placeholder="Recipient Address"
                     value={recipientAddress}
                     onChange={(e) => setRecipientAddress(e.target.value)}
-                    className="text-input"
+                    className="text-input text-white"
                   />
                   <Button
                     className="mt-5"
@@ -109,8 +111,12 @@ export default function ArtistDashboardPage() {
                     your appreciation. These can be used to unlock exclusive
                     perks.
                   </div>
+                  <div></div>
                 </div>
               )}
+              {
+                isSuccess && <div className="text-green-300 text-center  mt-2">Action was Successful.</div>
+              }
             </TabsContent>
             <TabsContent
               value="worldcoin"

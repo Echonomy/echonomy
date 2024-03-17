@@ -70,7 +70,7 @@ export default function Home() {
                     id={song.id}
                     previewSong={song.previewSong}
                     songName={song.title}
-                    artistName={song.artistWalletAddress}
+                    artistName={song.artist?.name ?? song.artistWalletAddress}
                     albumCover={song.artwork}
                     price={song.price}
                     createdAt={song.createdAt}
