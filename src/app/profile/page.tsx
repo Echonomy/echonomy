@@ -54,7 +54,7 @@ export default function Page() {
               <main className="flex flex-col justify-center text-white">
                 <div className="container flex flex-col justify-center px-0">
                   <div className="text-md my-4 mt-10 text-2xl font-semibold tracking-tight">
-                    Your uploaded tunes
+                    Your songs
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {songs.data
@@ -62,6 +62,7 @@ export default function Page() {
                       .map((song, i) => (
                         <SongCard
                           key={i}
+                          id={song.id}
                           songName={song.title}
                           artistName={song.artist.name}
                           albumCover={song.artwork}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSafeAccountClient } from "~/components/safe-account-provider";
@@ -27,7 +27,6 @@ const formSchema = z.object({
 
 export const EditProfileForm = () => {
   const safeAccountClient = useSafeAccountClient();
-  const [artworkFile, setArtworkFile] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,16 +36,22 @@ export const EditProfileForm = () => {
     },
   });
 
-  const signedUrlMutation = api.songs.signedUrl.useMutation();
-  const wA = safeAccountClient?.account?.address ?? "";
+  const signedUrlMutation = api.uploads.signedUrl.useMutation();
+  const walletAddress = safeAccountClient?.account?.address ?? "";
+  const updateArtistData = api.artists.update.useMutation();
 
   // Get artist data for connected wallet
-  const artistData = api.artists.get.useQuery({ walletAddress: wA });
-  console.log({ artistData: artistData.data, wA })
+  const artistData = api.artists.get.useQuery({ walletAddress });
 
-  const fields = form.watch();
+  useEffect(() => {
+    if (artistData.data) {
+      form.setValue("name", artistData.data.name);
+      form.setValue("bio", artistData.data.bio ?? "");
+      form.setValue("avatar", artistData.data.avatar ?? "");
+    }
+  }, [artistData.data, form]);
 
-  const handleDropArtwork = async (acceptedFiles: FileList | null) => {
+  const handleDropAvatar = async (acceptedFiles: FileList | null) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
       const allowedTypes = [
         { name: "jpg", types: ["image/jpeg"] },
@@ -62,10 +67,8 @@ export const EditProfileForm = () => {
           type: "typeError",
         });
       } else {
-        const artworkFile = acceptedFiles?.[0];
-        if (!artworkFile) return;
-        const albumCover = URL.createObjectURL(artworkFile); // Convert the File object to a data URL
-        setArtworkFile(albumCover);
+        const avatarFile = acceptedFiles?.[0];
+        if (!avatarFile) return;
 
         // Get the signed URL for artwork upload
         const signedUrl = await signedUrlMutation.mutateAsync();
@@ -73,9 +76,9 @@ export const EditProfileForm = () => {
         // Upload artwork to S3 using the signed URL
         const x = await fetch(signedUrl?.url, {
           method: "PUT",
-          body: artworkFile,
+          body: avatarFile,
           headers: {
-            "Content-Type": artworkFile.type,
+            "Content-Type": avatarFile.type,
           },
         });
 
@@ -91,12 +94,12 @@ export const EditProfileForm = () => {
     }
   };
 
-  const handleFormSubmit = form.handleSubmit(async () => {
+  const handleFormSubmit = form.handleSubmit(async (fields) => {
     // Submit the form data and artwork URL to save the metadata for the song
-    const formData = form.getValues();
     await updateArtistData.mutateAsync({
-      name: fields.name,
-      bio: fields.bio
+      name: fields.name || "Unknown",
+      bio: fields.bio || undefined,
+      avatar: fields.avatar || undefined,
     });
   });
 
@@ -146,7 +149,7 @@ export const EditProfileForm = () => {
                     <Dropzone
                       {...field}
                       dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropArtwork}
+                      handleOnDrop={handleDropAvatar}
                     />
                   </FormControl>
                   <FormDescription>
