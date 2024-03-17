@@ -10,7 +10,7 @@ async function getResponse(req: NextRequest): Promise<NextResponse> {
   const songData = api.songs.get.useQuery({
     id: Number(id),
   });
-
+  console.log(songData);
 
   return new NextResponse(`<!DOCTYPE html><html><head>
     <title>This is frame ${id}</title>
