@@ -52,7 +52,7 @@ export const artistsRouter = createTRPCRouter({
       let avatar: string | undefined = undefined;
       if (input.avatar) {
         const data = await getTempFileFromS3(input.avatar);
-        avatar = await uploadToLighthouse(data);
+        avatar = await uploadToLighthouse(Buffer.from(data));
       }
       await db.artist.upsert({
         where: {
