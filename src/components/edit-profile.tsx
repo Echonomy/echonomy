@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSafeAccountClient } from "~/components/safe-account-provider";
@@ -42,6 +42,7 @@ export const EditProfileForm = () => {
 
   // Get artist data for connected wallet
   const artistData = api.artists.get.useQuery({ walletAddress });
+  const [isLoading, setIsLoading] = useState<boolean | null>(false);
 
   useEffect(() => {
     if (artistData.data) {
@@ -51,7 +52,10 @@ export const EditProfileForm = () => {
     }
   }, [artistData.data, form]);
 
+  const fields = form.watch();
+
   const handleDropAvatar = async (acceptedFiles: FileList | null) => {
+    setIsLoading(true);
     if (acceptedFiles && acceptedFiles.length > 0) {
       const allowedTypes = [
         { name: "jpg", types: ["image/jpeg"] },
@@ -68,7 +72,7 @@ export const EditProfileForm = () => {
         });
       } else {
         const avatarFile = acceptedFiles?.[0];
-        if (!avatarFile) return;
+        if (!avatarFile) { setIsLoading(false); return; }
 
         // Get the signed URL for artwork upload
         const signedUrl = await signedUrlMutation.mutateAsync();
@@ -84,8 +88,10 @@ export const EditProfileForm = () => {
 
         // Save the artwork URL in the form data
         form.setValue("avatar", signedUrl.uploadId);
+        setIsLoading(false);
       }
     } else {
+      setIsLoading(false);
       form.setValue("avatar", "");
       form.setError("avatar", {
         message: "Avatar is required",
@@ -146,11 +152,14 @@ export const EditProfileForm = () => {
                 <FormItem>
                   <FormLabel>Profile Picture</FormLabel>
                   <FormControl>
-                    <Dropzone
-                      {...field}
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropAvatar}
-                    />
+                    {
+                      fields.avatar ? <div className="text-green-300">Successfully Uploaded.</div> :
+                        <Dropzone
+                          {...field}
+                          dropMessage="Drop files or click here"
+                          handleOnDrop={handleDropAvatar}
+                        />
+                    }
                   </FormControl>
                   <FormDescription>
                     Upload a profile picture that best represents you as an
@@ -160,7 +169,7 @@ export const EditProfileForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Save</Button>
+            <Button type="submit" disabled={isLoading}>Save</Button>
             <div className="pt-10 text-center text-xs text-neutral-700">
               <span className="font-bold">Your Safe Account:</span>{" "}
               {safeAccountClient?.account?.address}

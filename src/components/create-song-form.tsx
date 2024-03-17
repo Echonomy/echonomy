@@ -257,11 +257,13 @@ export const CreateSongForm = () => {
                   <FormLabel>Artwork</FormLabel>
                   <FormControl>
                     {/* <Input type="file" {...field} /> */}
-                    <Dropzone
-                      {...field}
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropArtwork}
-                    />
+                    {
+                      artworkFile ? <div className="text-green-300">Successfully Uploaded.</div> : <Dropzone
+                        {...field}
+                        dropMessage="Drop files or click here"
+                        handleOnDrop={handleDropArtwork}
+                      />
+                    }
                   </FormControl>
                   <FormDescription>
                     Upload your tune&apos;s artwork in an image file format.
@@ -277,11 +279,14 @@ export const CreateSongForm = () => {
                   <FormLabel>Tune File</FormLabel>
                   <FormControl>
                     {/* <Input type="file" {...field} /> */}
-                    <Dropzone
-                      {...field}
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropMusic}
-                    />
+                    {
+                      fields.media ? <div className="text-green-300">Successfully Uploaded.</div> :
+                        <Dropzone
+                          {...field}
+                          dropMessage="Drop files or click here"
+                          handleOnDrop={handleDropMusic}
+                        />
+                    }
                   </FormControl>
                   <FormDescription>
                     Upload your tune&apos;s mp3 / wav file.
