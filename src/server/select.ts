@@ -19,5 +19,4 @@ export const selectSongMeta = {
   },
   price: true,
   createdAt: true,
-  contractAddress: true,
 } as const satisfies Prisma.SongSelect;
