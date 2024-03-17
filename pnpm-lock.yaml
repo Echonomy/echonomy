@@ -31,9 +31,6 @@ dependencies:
   '@hookform/resolvers':
     specifier: ^3.3.4
     version: 3.3.4(react-hook-form@7.51.0)
-  '@lighthouse-web3/kavach':
-    specifier: ^0.1.5
-    version: 0.1.5
   '@lighthouse-web3/sdk':
     specifier: ^0.3.0
     version: 0.3.0
@@ -85,9 +82,6 @@ dependencies:
   '@worldcoin/idkit':
     specifier: ^1.1.4
     version: 1.1.4(@types/react-dom@18.2.22)(@types/react@18.2.66)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)(tailwindcss@3.4.1)(typescript@5.4.2)(zod@3.22.4)
-  bls-eth-wasm:
-    specifier: ^1.2.1
-    version: 1.2.1
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
