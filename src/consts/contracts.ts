@@ -7,6 +7,6 @@ export const contractAddress: Record<
   Record<Exclude<ContractName, "Safe">, `0x${string}`>
 > = {
   [baseSepolia.id]: {
-    EchonomySongRegistry: "0xEA16FC8824A5Cb725E5f4c6180B04d4Bf63740Db",
+    EchonomySongRegistry: "0x14c057f7B643b1eA5B0cFc54b7cfF399c277B57f",
   },
 };

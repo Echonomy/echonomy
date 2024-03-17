@@ -155,7 +155,6 @@ export const CreateSongForm = () => {
       functionName: "createSongContract",
       chain: safeAccountClient.chain,
       args: [
-        fields.title,
         (BigInt(Number(fields.price) * 100) *
           1n ** BigInt(safeAccountClient.chain.nativeCurrency.decimals)) /
           100n,

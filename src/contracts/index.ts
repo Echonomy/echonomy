@@ -2,35 +2,40 @@ export const contracts = {
   EchonomySongRegistry: [
     {
       type: "function",
-      name: "createSongContract",
-      inputs: [
-        { name: "name", type: "string", internalType: "string" },
-        { name: "price", type: "uint256", internalType: "uint256" },
-      ],
-      outputs: [],
-      stateMutability: "nonpayable",
-    },
-    {
-      type: "function",
-      name: "mintSong",
-      inputs: [
-        { name: "index", type: "uint256", internalType: "uint256" },
-        { name: "to", type: "address", internalType: "address" },
-      ],
+      name: "buySong",
+      inputs: [{ name: "index", type: "uint256", internalType: "uint256" }],
       outputs: [],
       stateMutability: "payable",
     },
     {
       type: "function",
-      name: "song",
-      inputs: [{ name: "index", type: "uint256", internalType: "uint256" }],
-      outputs: [
-        {
-          name: "",
-          type: "address",
-          internalType: "contract EchonomySong",
-        },
+      name: "createSongContract",
+      inputs: [{ name: "price", type: "uint256", internalType: "uint256" }],
+      outputs: [],
+      stateMutability: "nonpayable",
+    },
+    {
+      type: "function",
+      name: "ownedSongs",
+      inputs: [{ name: "owner", type: "address", internalType: "address" }],
+      outputs: [{ name: "", type: "uint256[]", internalType: "uint256[]" }],
+      stateMutability: "view",
+    },
+    {
+      type: "function",
+      name: "ownsSong",
+      inputs: [
+        { name: "owner", type: "address", internalType: "address" },
+        { name: "index", type: "uint256", internalType: "uint256" },
       ],
+      outputs: [{ name: "", type: "bool", internalType: "bool" }],
+      stateMutability: "view",
+    },
+    {
+      type: "function",
+      name: "songArtist",
+      inputs: [{ name: "index", type: "uint256", internalType: "uint256" }],
+      outputs: [{ name: "", type: "address", internalType: "address" }],
       stateMutability: "view",
     },
     {
@@ -42,9 +47,9 @@ export const contracts = {
     },
     {
       type: "function",
-      name: "songOwner",
+      name: "songOwners",
       inputs: [{ name: "index", type: "uint256", internalType: "uint256" }],
-      outputs: [{ name: "", type: "address", internalType: "address" }],
+      outputs: [{ name: "", type: "address[]", internalType: "address[]" }],
       stateMutability: "view",
     },
     {
