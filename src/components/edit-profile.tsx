@@ -47,7 +47,6 @@ export const EditProfileForm = () => {
     if (artistData.data) {
       form.setValue("name", artistData.data.name);
       form.setValue("bio", artistData.data.bio ?? "");
-      form.setValue("avatar", artistData.data.avatar ?? "");
     }
   }, [artistData.data, form]);
 
