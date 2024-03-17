@@ -20,7 +20,7 @@ import { useSafeAccountClient } from "./safe-account-provider";
 import { contracts } from "~/contracts";
 import { contractAddress } from "~/consts/contracts";
 import { usePublicClient } from "wagmi";
-import { type SupportedNetworkId } from "~/utils/networks";
+import { baseSepolia } from "viem/chains";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -147,9 +147,7 @@ export const CreateSongForm = () => {
     await safeAccountClient?.writeContract({
       account: safeAccountClient.account,
       abi: contracts.EchonomySongRegistry,
-      address:
-        contractAddress[safeAccountClient.chain.id as SupportedNetworkId]
-          .EchonomySongRegistry,
+      address: contractAddress[baseSepolia.id].EchonomySongRegistry,
       functionName: "createSongContract",
       chain: safeAccountClient.chain,
       args: [
@@ -162,9 +160,7 @@ export const CreateSongForm = () => {
 
     const songId = await publicClient?.readContract({
       abi: contracts.EchonomySongRegistry,
-      address:
-        contractAddress[safeAccountClient.chain.id as SupportedNetworkId]
-          .EchonomySongRegistry,
+      address: contractAddress[baseSepolia.id].EchonomySongRegistry,
       functionName: "songCount",
     });
 
