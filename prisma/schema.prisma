@@ -16,7 +16,6 @@ model Song {
   description         String
   price               String
   encryptedKey        String
-  contractAddress     String
   artistWalletAddress String
   artist              Artist  @relation(fields: [artistWalletAddress], references: [walletAddress])
   artwork             String

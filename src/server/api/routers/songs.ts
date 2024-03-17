@@ -17,6 +17,7 @@ import { uploadToLighthouse } from "~/server/lighthouse";
 import { db } from "~/server/db";
 import { selectSongMeta } from "~/server/select";
 import { mapSongMetaToDto } from "~/server/mappers";
+import { type SupportedNetworkId } from "~/utils/networks";
 
 export const songsRouter = createTRPCRouter({
   list: procedure.public.query(() => {
@@ -92,14 +93,15 @@ export const songsRouter = createTRPCRouter({
 
       log("Checking permissions...");
 
-      const songOwner = await viem.readContract({
+      const songArtist = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
-        address: contractAddresses[84532].EchonomySongRegistry,
-        functionName: "songOwner",
+        address:
+          contractAddresses[chainId as SupportedNetworkId].EchonomySongRegistry,
+        functionName: "songArtist",
         args: [BigInt(input.songId)],
       });
 
-      if (songOwner !== walletAddress) {
+      if (songArtist !== walletAddress) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "You are not the owner of the song",
@@ -107,13 +109,6 @@ export const songsRouter = createTRPCRouter({
       }
 
       log("Loading blockchain data...");
-
-      const contract = await viem.readContract({
-        abi: contracts.EchonomySongRegistry,
-        address: contractAddresses[84532].EchonomySongRegistry,
-        functionName: "song",
-        args: [BigInt(input.songId)],
-      });
 
       const price = await viem.readContract({
         abi: contracts.EchonomySongRegistry,
@@ -217,14 +212,13 @@ export const songsRouter = createTRPCRouter({
           previewSong: previewSongName,
           fullSong: fullSongName,
           price: price.toString(),
-          contractAddress: contract,
           artist: {
             connectOrCreate: {
               where: {
-                walletAddress: songOwner,
+                walletAddress: songArtist,
               },
               create: {
-                walletAddress: songOwner,
+                walletAddress: songArtist,
                 name: "Unknown",
               },
             },

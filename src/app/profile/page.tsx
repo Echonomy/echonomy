@@ -10,7 +10,7 @@ import { contracts } from "~/contracts";
 import { api } from "~/utils/trpc";
 import { SongCard } from "~/components/song-card";
 
-export function Page() {
+export default function Page() {
   const safeAccountClient = useSafeAccountClient();
   const publicClient = usePublicClient();
   const songs = api.songs.list.useQuery();
