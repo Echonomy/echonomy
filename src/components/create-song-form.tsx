@@ -24,6 +24,7 @@ import { contractAddress } from "~/consts/contracts";
 import { usePublicClient } from "wagmi";
 import { baseSepolia } from "viem/chains";
 import { useRouter } from "next/navigation";
+import { formatEther, formatUnits } from "viem";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -43,7 +44,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export const CreateSongForm = () => {
+export const CreateSongForm = ({ artistName }: { artistName: string }) => {
   const router = useRouter();
   const safeAccountClient = useSafeAccountClient();
   const publicClient = usePublicClient();
@@ -338,8 +339,9 @@ export const CreateSongForm = () => {
               }
               {...{
                 songName: fields.title || "Title",
-                artistName: "Lucid Waves",
-                price: convertedPrice.toString(),
+                artistName,
+                price: fields.price,
+                dontFormat: true,
                 createdAt: new Date(),
               }}
             />

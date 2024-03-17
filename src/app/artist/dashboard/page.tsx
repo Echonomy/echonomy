@@ -72,7 +72,7 @@ export default function ArtistDashboardPage() {
               )}
             </TabsContent>
             <TabsContent value="upload">
-              <CreateSongForm />
+              <CreateSongForm artistName={artist?.name ?? safeAccountClient?.account?.address ?? ""} />
             </TabsContent>
             <TabsContent value="fantoken">
               {artist?.fanTokenContract ? (

@@ -15,6 +15,7 @@ export function SongCard({
   price,
   previewSong,
   id,
+  dontFormat
 }: {
   songName: string;
   artistName: string;
@@ -104,7 +105,7 @@ export function SongCard({
               <h3 className="mr-4 font-bold">{songName}</h3>
               <p className="text-sm">{artistName.slice(0, 16)}</p>
               <p className="mt-1 text-sm">
-                {formatUnits(BigInt(price), 6)}{" "}
+                {dontFormat ? price : formatUnits(BigInt(price), 6)}{" "}
                 <span className="text-xs">USDC</span>
               </p>
             </div>
