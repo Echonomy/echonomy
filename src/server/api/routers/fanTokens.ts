@@ -3,15 +3,39 @@ import {
   createWalletClient,
   getContractAddress,
   http,
+  defineChain
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { createTRPCRouter, procedure } from "../trpc";
 import { env } from "~/env";
-import { chiliz } from "viem/chains";
+
 import { EchonomyFanToken } from "~/server/fanTokenStuff";
 import { db } from "~/server/db";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
+
+
+const chiliz = defineChain({
+  id: 88882,
+  name: 'Chiliz Spicy',
+  network: 'chiliz-spicy',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'CHZ',
+    symbol: 'CHZ',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://spicy-rpc.chiliz.com/', 'https://chiliz-spicy.publicnode.com'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Chiliz Explorer',
+      url: 'https://testnet.chiliscan.com/',
+    },
+  },
+})
 
 export const fanTokensRouter = createTRPCRouter({
   deploy: procedure.private.mutation(async ({ ctx }) => {

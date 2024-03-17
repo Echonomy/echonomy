@@ -36,8 +36,8 @@ export default function ArtistDashboardPage() {
   const transferFanTokens = async () => {
     setIsLoading(true);
     await mintFanTokens.mutateAsync({
-      amount,
-      address: recipientAddress,
+      amount: Number(amount),
+      to: recipientAddress,
     });
     setIsLoading(false);
   };
@@ -81,13 +81,13 @@ export default function ArtistDashboardPage() {
                     placeholder="Token Amount"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="text-input"
+                    className="text-input text-white"
                   />
                   <Input
                     placeholder="Recipient Address"
                     value={recipientAddress}
                     onChange={(e) => setRecipientAddress(e.target.value)}
-                    className="text-input"
+                    className="text-input text-white"
                   />
                   <Button className="mt-5" onClick={transferFanTokens} disabled={isLoading}>
                     Gift Fan Tokens
