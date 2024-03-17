@@ -50,6 +50,16 @@ export default function ArtistPage({
     const price = songData.data?.price;
     const account = safeAccountClient?.account;
     if (!account || price === undefined) return;
+
+    await safeAccountClient?.writeContract({
+      account,
+      abi: contracts.USDC,
+      chain: safeAccountClient.chain,
+      address: contractAddress[84532].USDC,
+      functionName: "approve",
+      args: [contractAddress[84532].EchonomySongRegistry, BigInt(price)],
+    });
+
     await safeAccountClient?.writeContract({
       account,
       abi: contracts.EchonomySongRegistry,
@@ -57,8 +67,8 @@ export default function ArtistPage({
       address: contractAddress[84532].EchonomySongRegistry,
       functionName: "buySong",
       args: [BigInt(id)],
-      value: BigInt(price),
     });
+
     setCanDownload(true);
   };
 
@@ -122,8 +132,11 @@ export default function ArtistPage({
             previewSong={songData.data.previewSong}
           />
           {songData.data.artist?.name && (
-            <Link href={`/artist/${songData.data.artist?.walletAddress}`} passHref>
-              <div className="mt-5 text-neutral-500 text-xs hover:underline text-center w-full">
+            <Link
+              href={`/artist/${songData.data.artist?.walletAddress}`}
+              passHref
+            >
+              <div className="mt-5 w-full text-center text-xs text-neutral-500 hover:underline">
                 View other tunes by {songData.data.artist?.name}
               </div>
             </Link>
