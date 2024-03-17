@@ -1,5 +1,6 @@
 import "~/styles/globals.css";
 
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/utils/trpc";
@@ -28,13 +29,15 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`font-sans ${inter.variable}`}>
         <div className="m-auto max-w-5xl">
-          <TRPCReactProvider>
-            <DynamicProvider>
-              <Nav />
-              <hr className="mt-4" />
-              <SafeAccountProvider>{children}</SafeAccountProvider>
-            </DynamicProvider>
-          </TRPCReactProvider>
+          <Suspense fallback={<div>Loading...</div>}>
+            <TRPCReactProvider>
+              <DynamicProvider>
+                <Nav />
+                <hr className="mt-4" />
+                <SafeAccountProvider>{children}</SafeAccountProvider>
+              </DynamicProvider>
+            </TRPCReactProvider>
+          </Suspense>
         </div>
       </body>
     </html>
