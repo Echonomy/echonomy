@@ -16,11 +16,11 @@ const frameMetadata = getFrameMetadata({
 export const metadata: Metadata = {
 
   
-  title: 'Cosmic Cowboys',
-  description: 'A frame telling the story of Cosmic Cowboys',
+  title: 'I just released a Tune on IndieTunes',
+  description: 'A frame showing a song',
   openGraph: {
-    title: 'Cosmic Cowboys',
-    description: 'A frame telling the story of Cosmic Cowboys',
+    title: 'I just released a Tune on IndieTunes',
+    description: 'A frame showing a song',
     images: [],
   },
   other: {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <h1>Cosmic Cowboys</h1>
+      <h1>IndieTunes</h1>
     </>
   );
 }
