@@ -1,4 +1,4 @@
-"use client"l
+"use client";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -193,18 +193,21 @@ export const CreateSongForm = () => {
     if (!songId) throw new Error("Failed to create song contract");
 
     // Submit the form data and artwork URL to save the metadata for the song
-    registerSongMutation.mutate({
-      songId: songId.toString(),
-      title: formValues.title,
-      description: formValues.description,
-      artworkUploadId: formValues.artwork,
-      mediaUploadId: formValues.media,
-    }, {
-      onSettled: () => {
-        utils.invalidate();
-        router.replace("/");
+    registerSongMutation.mutate(
+      {
+        songId: songId.toString(),
+        title: formValues.title,
+        description: formValues.description,
+        artworkUploadId: formValues.artwork,
+        mediaUploadId: formValues.media,
       },
-    });
+      {
+        onSettled: () => {
+          utils.invalidate();
+          router.replace("/");
+        },
+      },
+    );
   });
 
   return (
