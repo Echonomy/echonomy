@@ -70,6 +70,7 @@ export const EditProfileForm = () => {
           message: "File type is not valid",
           type: "typeError",
         });
+        setIsLoading(false);
       } else {
         const avatarFile = acceptedFiles?.[0];
         if (!avatarFile) { setIsLoading(false); return; }
