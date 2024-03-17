@@ -166,7 +166,7 @@ export const songsRouter = createTRPCRouter({
           await crypto.subtle.encrypt(
             {
               name: "AES-GCM",
-              iv: new Uint8Array(12),
+              iv: new Uint8Array(encryptedKeyIv),
             },
             kek,
             await crypto.subtle.exportKey("raw", key),
@@ -183,7 +183,7 @@ export const songsRouter = createTRPCRouter({
           await crypto.subtle.encrypt(
             {
               name: "AES-GCM",
-              iv: new Uint8Array(12),
+              iv: new Uint8Array(encryptedFullSongIv),
             },
             key,
             fullSong,
@@ -236,4 +236,47 @@ export const songsRouter = createTRPCRouter({
     const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
     return { uploadId: filename, url };
   }),
+
+  decryptionKey: procedure.private
+    .input(z.object({ songId: z.number() }))
+    .mutation(async ({ input }) => {
+      const song = await db.song.findUnique({
+        where: {
+          id: input.songId,
+        },
+        select: {
+          encryptedKey: true,
+        },
+      });
+
+      if (!song) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Song not found",
+        });
+      }
+
+      const kek = await crypto.subtle.importKey(
+        "raw",
+        Buffer.from(env.MEDIA_KEK, "base64"),
+        "AES-GCM",
+        true,
+        ["encrypt", "decrypt"],
+      );
+
+      const encryptedKey = Buffer.from(song.encryptedKey, "base64");
+
+      const iv = encryptedKey.subarray(0, 12);
+
+      const key = await crypto.subtle.decrypt(
+        {
+          name: "AES-GCM",
+          iv,
+        },
+        kek,
+        encryptedKey.subarray(12),
+      );
+
+      return Buffer.from(key).toString("base64");
+    }),
 });
