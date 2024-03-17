@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState } from "react";
 import { CreateSongForm } from "~/components/create-song-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import ArtistSongs from "~/components/artist-songs";
@@ -32,7 +32,7 @@ export default function ArtistDashboardPage() {
     setIsLoading(true);
     await deployFanToken.mutateAsync();
     setIsLoading(false);
-  }
+  };
 
   const transferFanTokens = async () => {
     setIsLoading(true);
@@ -43,8 +43,6 @@ export default function ArtistDashboardPage() {
     setIsSuccess(true);
     setIsLoading(false);
   };
-
-  console.log({ artist })
 
   const utils = api.useUtils();
 
@@ -78,7 +76,7 @@ export default function ArtistDashboardPage() {
             </TabsContent>
             <TabsContent value="fantoken">
               {artist?.fanTokenContract ? (
-                <div className="text-center space-y-4">
+                <div className="space-y-4 text-center">
                   <Input
                     placeholder="Token Amount"
                     value={amount}
@@ -91,17 +89,27 @@ export default function ArtistDashboardPage() {
                     onChange={(e) => setRecipientAddress(e.target.value)}
                     className="text-input text-white"
                   />
-                  <Button className="mt-5" onClick={transferFanTokens} disabled={isLoading}>
+                  <Button
+                    className="mt-5"
+                    onClick={transferFanTokens}
+                    disabled={isLoading}
+                  >
                     Gift Fan Tokens
                   </Button>
                 </div>
               ) : (
                 <div className="text-center">
-                  <Button className="mt-5" onClick={generateFanToken} disabled={isLoading}>
+                  <Button
+                    className="mt-5"
+                    onClick={generateFanToken}
+                    disabled={isLoading}
+                  >
                     Generate your Fan Token
                   </Button>
-                  <div className="text-xs mt-5 text-neutral-500">
-                    You can give fan tokens to your biggest supporters to show your appreciation. These can be used to unlock exclusive perks.
+                  <div className="mt-5 text-xs text-neutral-500">
+                    You can give fan tokens to your biggest supporters to show
+                    your appreciation. These can be used to unlock exclusive
+                    perks.
                   </div>
                   <div></div>
                 </div>
@@ -129,8 +137,13 @@ export default function ArtistDashboardPage() {
                 >
                   {({ open }) => (
                     <>
-                      <Button className="mt-5" onClick={open}>Verify with World ID</Button>
-                      <div className="text-xs mt-5 text-neutral-500">Verify you&apos;re a real artist, not a bot for greater discoverability</div>
+                      <Button className="mt-5" onClick={open}>
+                        Verify with World ID
+                      </Button>
+                      <div className="mt-5 text-xs text-neutral-500">
+                        Verify you&apos;re a real artist, not a bot for greater
+                        discoverability
+                      </div>
                     </>
                   )}
                 </IDKitWidget>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +23,7 @@ import { contracts } from "~/contracts";
 import { contractAddress } from "~/consts/contracts";
 import { usePublicClient } from "wagmi";
 import { baseSepolia } from "viem/chains";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -41,6 +44,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export const CreateSongForm = () => {
+  const router = useRouter();
   const safeAccountClient = useSafeAccountClient();
   const publicClient = usePublicClient();
   const [artworkFile, setArtworkFile] = useState<string | null>(null);
@@ -55,6 +59,7 @@ export const CreateSongForm = () => {
       media: "",
     },
   });
+  const utils = api.useUtils();
 
   const registerSongMutation = api.songs.register.useMutation();
   const signedUrlQuery = api.uploads.signedUrl.useMutation();
@@ -188,13 +193,21 @@ export const CreateSongForm = () => {
     if (!songId) throw new Error("Failed to create song contract");
 
     // Submit the form data and artwork URL to save the metadata for the song
-    await registerSongMutation.mutateAsync({
-      songId: songId.toString(),
-      title: formValues.title,
-      description: formValues.description,
-      artworkUploadId: formValues.artwork,
-      mediaUploadId: formValues.media,
-    });
+    registerSongMutation.mutate(
+      {
+        songId: songId.toString(),
+        title: formValues.title,
+        description: formValues.description,
+        artworkUploadId: formValues.artwork,
+        mediaUploadId: formValues.media,
+      },
+      {
+        onSettled: () => {
+          void utils.invalidate();
+          router.replace("/");
+        },
+      },
+    );
   });
 
   return (

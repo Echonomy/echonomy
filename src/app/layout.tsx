@@ -32,9 +32,11 @@ export default function RootLayout({
           <Suspense fallback={<div>Loading...</div>}>
             <TRPCReactProvider>
               <DynamicProvider>
-                <Nav />
-                <hr className="mt-4" />
-                <SafeAccountProvider>{children}</SafeAccountProvider>
+                <SafeAccountProvider>
+                  <Nav />
+                  <hr className="mt-4" />
+                  {children}
+                </SafeAccountProvider>
               </DynamicProvider>
             </TRPCReactProvider>
           </Suspense>

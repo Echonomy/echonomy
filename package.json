@@ -38,6 +38,7 @@
     "@trpc/react-query": "next",
     "@trpc/server": "next",
     "@worldcoin/idkit": "^1.1.4",
+    "bls-eth-wasm": "^1.2.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.0.0",
