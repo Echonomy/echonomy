@@ -30,8 +30,12 @@ const formSchema = z.object({
     message: "Description must be at least 2 characters.",
   }),
   price: z.string(),
-  artwork: z.string(),
-  media: z.string(),
+  artwork: z.string().min(1, {
+    message: "Artwork is required",
+  }),
+  media: z.string().min(1, {
+    message: "Song is required",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
