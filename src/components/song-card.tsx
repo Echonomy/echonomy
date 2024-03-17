@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { Card, CardContent } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -23,7 +25,14 @@ export function SongCard({
   createdAt: Date;
 }) {
   const [isPlaying, setIsPlaying] = React.useState(false);
-  const audioRef = React.useRef(new Audio(previewSong));
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      audioRef.current = new Audio(previewSong);
+    }
+  }, [previewSong]); // Reinitialize if previewSong changes
+
 
   // Inline style for background image
   const albumCoverStyle = {
@@ -36,6 +45,8 @@ export function SongCard({
   const togglePlay = (e) => {
     e.preventDefault(true);
 
+    if (!audioRef.current) return;
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
@@ -47,6 +58,7 @@ export function SongCard({
   // Cleanup audio element when component unmounts
   React.useEffect(() => {
     return () => {
+      if (!audioRef.current) return;
       audioRef.current.pause();
       audioRef.current.volume = 1.0; // Max volume
       audioRef.current.muted = false;
@@ -57,6 +69,7 @@ export function SongCard({
 
   React.useEffect(() => {
     if (!previewSong) return;
+    if (!audioRef.current) return;
     audioRef.current.src = previewSong;
   }, [previewSong]);
 

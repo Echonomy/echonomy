@@ -132,8 +132,8 @@ export default function ArtistPage({
         <div className="flex flex-col items-center justify-center md:col-span-2">
           {canDownload === null && <div>Loading...</div>}
           {canDownload === false && (
-            <div>
-              <div>You don&apos;t own this NFT</div>
+            <div className="text-center">
+              <div className="mb-2">You don&apos;t own this NFT</div>
               <Button onClick={buyNFT}>Buy this NFT</Button>
             </div>
           )}
