@@ -90,7 +90,7 @@ export function SongCard({
             {previewSong && (
               <Button
                 variant="outline"
-                className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110"
+                className="h-14 w-14 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110 bg-neutral-800"
                 onClick={togglePlay}
               >
                 {isPlaying ? (

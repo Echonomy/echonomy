@@ -16,6 +16,7 @@ import { env } from "~/env";
 export default function ArtistDashboardPage() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [amount, setAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
   const safeAccountClient = useSafeAccountClient();
@@ -39,6 +40,7 @@ export default function ArtistDashboardPage() {
       amount: Number(amount),
       to: recipientAddress,
     });
+    setIsSuccess(true);
     setIsLoading(false);
   };
 
@@ -101,8 +103,12 @@ export default function ArtistDashboardPage() {
                   <div className="text-xs mt-5 text-neutral-500">
                     You can give fan tokens to your biggest supporters to show your appreciation. These can be used to unlock exclusive perks.
                   </div>
+                  <div></div>
                 </div>
               )}
+              {
+                isSuccess && <div className="text-green-300 text-center  mt-2">Action was Successful.</div>
+              }
             </TabsContent>
             <TabsContent
               value="worldcoin"
