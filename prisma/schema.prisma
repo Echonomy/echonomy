@@ -32,6 +32,7 @@ model Artist {
   bio                 String?
   avatar              String?
   songs               Song[]
+  verified            Boolean  @default(false)
   createdAt           DateTime @default(now())
 
   @@index([name])
