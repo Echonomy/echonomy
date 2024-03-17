@@ -36,21 +36,27 @@ export const env = createEnv({
     // Default = production
     NEXT_PUBLIC_CHILIZ_SPICY_RPC_URL: z
       .string()
+      .optional()
       .default("https://spicy-rpc.chiliz.com"),
     NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL: z
       .string()
+      .optional()
       .default("https://sepolia.base.org"),
     NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC_URL: z
       .string()
+      .optional()
       .default("https://public.stackup.sh/api/v1/node/arbitrum-sepolia"),
     NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID: z
       .string()
+      .optional()
       .default("269789a9-905c-4acc-a458-5011c11c3fa4"),
     NEXT_PUBLIC_PIMLICO_API_KEY: z
       .string()
+      .optional()
       .default("d73da1e7-bd3e-4abd-86fe-40a5c2a994f9"),
     NEXT_PUBLIC_WLD_APP_ID: z
       .string()
+      .optional()
       .default("app_staging_63800ac4dbcf33afef084231cbd7bee1"),
     NEXT_PUBLIC_WLD_ACTION_ID: z.string().default("indietunes"),
   },
