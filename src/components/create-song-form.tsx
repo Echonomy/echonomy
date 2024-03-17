@@ -56,7 +56,7 @@ export const CreateSongForm = () => {
   });
 
   const registerSongMutation = api.songs.register.useMutation();
-  const signedUrlQuery = api.songs.signedUrl.useMutation();
+  const signedUrlQuery = api.uploads.signedUrl.useMutation();
 
   const fields = form.watch();
 

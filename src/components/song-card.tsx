@@ -12,7 +12,7 @@ export function SongCard({
   albumCover,
   price,
   previewSong,
-  id
+  id,
 }: {
   songName: string;
   artistName: string;
@@ -33,8 +33,8 @@ export function SongCard({
     height: 250,
   };
 
-  const togglePlay = (e) => {
-    e.preventDefault(true);
+  const togglePlay: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault();
 
     if (isPlaying) {
       audioRef.current.pause();
@@ -92,7 +92,8 @@ export function SongCard({
               <h3 className="mr-4 font-bold">{songName}</h3>
               <p className="text-sm">{artistName.slice(0, 16)}</p>
               <p className="mt-1 text-sm">
-                {formatEther(BigInt(price))} <span className="text-xs">USDC</span>
+                {formatEther(BigInt(price))}{" "}
+                <span className="text-xs">USDC</span>
               </p>
             </div>
           </CardContent>

@@ -37,12 +37,12 @@ export const EditProfileForm = () => {
     },
   });
 
-  const signedUrlMutation = api.songs.signedUrl.useMutation();
+  const signedUrlMutation = api.uploads.signedUrl.useMutation();
   const wA = safeAccountClient?.account?.address ?? "";
 
   // Get artist data for connected wallet
   const artistData = api.artists.get.useQuery({ walletAddress: wA });
-  console.log({ artistData: artistData.data, wA })
+  console.log({ artistData: artistData.data, wA });
 
   const fields = form.watch();
 
@@ -96,7 +96,7 @@ export const EditProfileForm = () => {
     const formData = form.getValues();
     await updateArtistData.mutateAsync({
       name: fields.name,
-      bio: fields.bio
+      bio: fields.bio,
     });
   });
 
