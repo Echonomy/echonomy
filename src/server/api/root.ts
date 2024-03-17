@@ -2,6 +2,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { songsRouter } from "./routers/songs";
 import { artistsRouter } from "./routers/artists";
 import { uploadsRouter } from "./routers/uploads";
+import { fanTokensRouter } from "./routers/fanTokens";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   artists: artistsRouter,
   songs: songsRouter,
   uploads: uploadsRouter,
+  fanTokens: fanTokensRouter,
 });
 
 // export type definition of API

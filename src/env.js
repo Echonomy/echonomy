@@ -20,6 +20,7 @@ export const env = createEnv({
     AWS_SECRET_ACCESS_KEY: z.string(),
     AWS_DEFAULT_REGION: z.string(),
     AWS_S3_TEMP_BUCKET_NAME: z.string(),
+    FAN_TOKEN_MANAGER_PRIVATE_KEY: z.string(),
     FFMPEG_API_URL: z.string(),
     FFMPEG_API_KEY: z.string(),
     LIGHTHOUSE_API_KEY: z.string(),
@@ -35,6 +36,7 @@ export const env = createEnv({
     NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL: z.string(),
     NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID: z.string(),
     NEXT_PUBLIC_PIMLICO_API_KEY: z.string(),
+    NEXT_PUBLIC_CHILIZ_SPICY_RPC_URL: z.string(),
     NEXT_PUBLIC_WLD_APP_ID: z.string(),
     NEXT_PUBLIC_WLD_ACTION_ID: z.string(),
   },
@@ -50,6 +52,7 @@ export const env = createEnv({
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     AWS_DEFAULT_REGION: process.env.AWS_DEFAULT_REGION,
     AWS_S3_TEMP_BUCKET_NAME: process.env.AWS_S3_TEMP_BUCKET_NAME,
+    FAN_TOKEN_MANAGER_PRIVATE_KEY: process.env.FAN_TOKEN_MANAGER_PRIVATE_KEY,
     FFMPEG_API_URL: process.env.FFMPEG_API_URL,
     FFMPEG_API_KEY: process.env.FFMPEG_API_KEY,
     LIGHTHOUSE_API_KEY: process.env.LIGHTHOUSE_API_KEY,
@@ -59,6 +62,8 @@ export const env = createEnv({
     NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID:
       process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID,
     NEXT_PUBLIC_PIMLICO_API_KEY: process.env.NEXT_PUBLIC_PIMLICO_API_KEY,
+    NEXT_PUBLIC_CHILIZ_SPICY_RPC_URL:
+      process.env.NEXT_PUBLIC_CHILIZ_SPICY_RPC_URL,
     NEXT_PUBLIC_WLD_APP_ID: process.env.NEXT_PUBLIC_WLD_APP_ID,
     NEXT_PUBLIC_WLD_ACTION_ID: process.env.NEXT_PUBLIC_WLD_ACTION_ID,
   },
