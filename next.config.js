@@ -11,6 +11,8 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 });
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  output: "standalone",
+};
 
 export default withBundleAnalyzer(config);
