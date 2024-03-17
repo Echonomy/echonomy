@@ -200,17 +200,29 @@ export const songsRouter = createTRPCRouter({
         uploadToLighthouse(Buffer.from(encryptedFullSong)),
       ]);
 
+      // Upload metadata to lighthouse
+
+      const metadata = {
+        id: Number(input.songId),
+        title: input.title,
+        description: input.description,
+        artwork: artworkName,
+        previewSong: previewSongName,
+        fullSong: fullSongName,
+        price: price.toString(),
+      } as const;
+
+      const metadataHash = await uploadToLighthouse(
+        Buffer.from(JSON.stringify(metadata), "utf8"),
+      );
+
       log("Save info in DB...");
 
       await db.song.create({
         data: {
-          id: Number(input.songId),
-          title: input.title,
-          description: input.description,
+          ...metadata,
           encryptedKey,
-          artwork: artworkName,
-          previewSong: previewSongName,
-          fullSong: fullSongName,
+          metadataHash,
           price: price.toString(),
           artist: {
             connectOrCreate: {

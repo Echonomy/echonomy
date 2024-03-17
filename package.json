@@ -51,7 +51,7 @@
     "react-hook-form": "^7.51.0",
     "react-parallax-tilt": "^1.7.215",
     "server-only": "^0.0.1",
-    "sharp": "^0.33.2",
+    "sharp": "0.32.6",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
@@ -81,14 +81,6 @@
   },
   "packageManager": "pnpm@8.10.5",
   "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "linux"
-      ],
-      "cpu": [
-        "x64"
-      ]
-    },
     "patchedDependencies": {
       "@dynamic-labs/viem-utils@2.0.0-alpha.17": "patches/@dynamic-labs__viem-utils@2.0.0-alpha.17.patch"
     }

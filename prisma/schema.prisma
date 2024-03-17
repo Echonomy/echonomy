@@ -21,6 +21,7 @@ model Song {
   artwork             String
   fullSong            String
   previewSong         String
+  metadataHash        String?
   createdAt           DateTime @default(now())
 
   @@index([title])
