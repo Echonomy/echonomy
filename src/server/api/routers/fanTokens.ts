@@ -104,4 +104,43 @@ export const fanTokensRouter = createTRPCRouter({
         args: [input.to as `0x${string}`, BigInt(input.amount)],
       });
     }),
+
+  balance: procedure.public
+    .input(
+      z.object({
+        userWalletAddress: z.string(),
+        artistWalletAddress: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const artist = await db.artist.findUniqueOrThrow({
+        where: {
+          walletAddress: input.artistWalletAddress,
+        },
+        select: {
+          fanTokenContract: true,
+        },
+      });
+
+      if (!artist.fanTokenContract) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Fan token contract not deployed",
+        });
+      }
+
+      const publicClient = createPublicClient({
+        chain: chiliz,
+        transport: http(env.NEXT_PUBLIC_CHILIZ_SPICY_RPC_URL),
+      });
+
+      const balance = await publicClient.readContract({
+        abi: EchonomyFanToken.abi,
+        address: artist.fanTokenContract as `0x${string}`,
+        functionName: "balanceOf",
+        args: [input.userWalletAddress as `0x${string}`],
+      });
+
+      return balance;
+    }),
 });
