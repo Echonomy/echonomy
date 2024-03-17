@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 async function getResponse(req: NextRequest): Promise<NextResponse> {
   const searchParams = req.nextUrl.searchParams
-  const id:any = searchParams.get("id")
+  const id = String(searchParams.get("id"));
   const idAsNumber = parseInt(id)
 
   const nextId = idAsNumber + 1
