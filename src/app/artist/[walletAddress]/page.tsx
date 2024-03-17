@@ -34,6 +34,7 @@ export default function ArtistPage({
           <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2">
             {artistSongsQuery.data?.map((song, i) => (
               <SongCard
+                id={song.id}
                 key={i}
                 songName={song.title}
                 artistName={song.artist?.name}

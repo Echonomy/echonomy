@@ -4,6 +4,7 @@ import { Button } from "~/components/ui/button";
 import { PlayIcon, StopIcon } from "@radix-ui/react-icons";
 import Tilt from "react-parallax-tilt";
 import { formatEther } from "viem";
+import Link from "next/link";
 
 export function SongCard({
   songName,
@@ -11,12 +12,14 @@ export function SongCard({
   albumCover,
   price,
   previewSong,
+  id
 }: {
   songName: string;
   artistName: string;
   albumCover: string;
   price: string;
   previewSong?: string;
+  id?: number;
   createdAt: Date;
 }) {
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -56,41 +59,43 @@ export function SongCard({
   }, [previewSong]);
 
   return (
-    <Tilt
-      tiltReverse
-      tiltMaxAngleX={7}
-      tiltMaxAngleY={7}
-      glareEnable
-      className="overflow-hidden rounded-lg"
-    >
-      <Card className="flex flex-col overflow-hidden rounded-lg shadow-lg hover:cursor-pointer">
-        <div
-          className="flex h-52 w-full flex-shrink-0 items-center justify-center overflow-hidden"
-          style={albumCoverStyle}
-        ></div>
-        <CardContent className="relative p-4">
-          {previewSong && (
-            <Button
-              variant="outline"
-              className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110"
-              onClick={togglePlay}
-            >
-              {isPlaying ? (
-                <StopIcon className="h-10 w-10 p-2 text-white" />
-              ) : (
-                <PlayIcon className="h-10 w-10 p-2 text-white" />
-              )}
-            </Button>
-          )}
-          <div>
-            <h3 className="mr-4 font-bold">{songName}</h3>
-            <p className="text-sm">{artistName.slice(0, 16)}...</p>
-            <p className="mt-1 text-sm">
-              {formatEther(BigInt(price))} <span className="text-xs">USDC</span>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </Tilt>
+    <Link href={`/tune/${id}`} passHref>
+      <Tilt
+        tiltReverse
+        tiltMaxAngleX={7}
+        tiltMaxAngleY={7}
+        glareEnable
+        className="overflow-hidden rounded-lg"
+      >
+        <Card className="flex flex-col overflow-hidden rounded-lg shadow-lg hover:cursor-pointer">
+          <div
+            className="flex h-52 w-full flex-shrink-0 items-center justify-center overflow-hidden"
+            style={albumCoverStyle}
+          ></div>
+          <CardContent className="relative p-4">
+            {previewSong && (
+              <Button
+                variant="outline"
+                className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110"
+                onClick={togglePlay}
+              >
+                {isPlaying ? (
+                  <StopIcon className="h-10 w-10 p-2 text-white" />
+                ) : (
+                  <PlayIcon className="h-10 w-10 p-2 text-white" />
+                )}
+              </Button>
+            )}
+            <div>
+              <h3 className="mr-4 font-bold">{songName}</h3>
+              <p className="text-sm">{artistName.slice(0, 16)}</p>
+              <p className="mt-1 text-sm">
+                {formatEther(BigInt(price))} <span className="text-xs">USDC</span>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </Tilt>
+    </Link>
   );
 }
