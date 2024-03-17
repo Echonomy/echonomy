@@ -65,7 +65,7 @@ export const songsRouter = createTRPCRouter({
         });
       }
 
-      return mapArtistMetaToDto(artist);
+      return mapSongMetaToDto(song);
     }),
 
   register: procedure.private
