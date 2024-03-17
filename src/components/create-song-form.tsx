@@ -176,7 +176,7 @@ export const CreateSongForm = () => {
       address: contractAddress[baseSepolia.id].EchonomySongRegistry,
       functionName: "createSongContract",
       chain: safeAccountClient.chain,
-      args: [BigInt(Number(fields.price) * 6 ** 10)],
+      args: [BigInt(Number(fields.price) * 10 ** 6)],
     });
 
     const songId = await publicClient?.readContract({
