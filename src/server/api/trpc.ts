@@ -158,6 +158,8 @@ export const procedure = {
       });
     }
 
-    return next({ ctx: { ...ctx, chainId, walletAddress } });
+    return next({
+      ctx: { ...ctx, chainId, walletAddress: safeAddress as `0x${string}` },
+    });
   }),
 };

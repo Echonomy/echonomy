@@ -16,7 +16,7 @@ export function SongCard({
   artistName: string;
   albumCover: string;
   price: string;
-  previewSong: string;
+  previewSong?: string;
   createdAt: Date;
 }) {
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -51,6 +51,7 @@ export function SongCard({
   }, []);
 
   React.useEffect(() => {
+    if (!previewSong) return;
     audioRef.current.src = previewSong;
   }, [previewSong]);
 
@@ -68,17 +69,19 @@ export function SongCard({
           style={albumCoverStyle}
         ></div>
         <CardContent className="relative p-4">
-          <Button
-            variant="outline"
-            className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110"
-            onClick={togglePlay}
-          >
-            {isPlaying ? (
-              <StopIcon className="h-10 w-10 p-2 text-white" />
-            ) : (
-              <PlayIcon className="h-10 w-10 p-2 text-white" />
-            )}
-          </Button>
+          {previewSong && (
+            <Button
+              variant="outline"
+              className="h-15 w-15 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110"
+              onClick={togglePlay}
+            >
+              {isPlaying ? (
+                <StopIcon className="h-10 w-10 p-2 text-white" />
+              ) : (
+                <PlayIcon className="h-10 w-10 p-2 text-white" />
+              )}
+            </Button>
+          )}
           <div>
             <h3 className="mr-4 font-bold">{songName}</h3>
             <p className="text-sm">{artistName.slice(0, 16)}...</p>

@@ -47,13 +47,15 @@ export const artistsRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const artist = await db.artist.update({
+      await db.artist.upsert({
         where: {
           walletAddress: ctx.walletAddress,
         },
-        data: input,
+        create: {
+          walletAddress: ctx.walletAddress,
+          name: input.name,
+        },
+        update: input,
       });
-
-      return artist;
     }),
 });

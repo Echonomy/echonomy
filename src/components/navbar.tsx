@@ -58,39 +58,34 @@ export function Nav() {
             {/* </Link> */}
           </NavigationMenuItem>
 
-          {!primaryWallet && !safeAccountClient?.account ? (
-            <>
-              <NavigationMenuItem>
-                <DynamicWidget />
-              </NavigationMenuItem>
-            </>
-          ) : (
-            <>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>For Artists</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-1 lg:w-[400px] ">
-                    {components.map((component) => (
-                      <ListItem
-                        key={component.title}
-                        title={component.title}
-                        href={component.href}
-                      >
-                        {component.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/profile" passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    My Profile
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </>
-          )}
+          <NavigationMenuItem>
+            <DynamicWidget />
+          </NavigationMenuItem>
+          <>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>For Artists</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[400px] md:grid-cols-1 lg:w-[400px] ">
+                  {components.map((component) => (
+                    <ListItem
+                      key={component.title}
+                      title={component.title}
+                      href={component.href}
+                    >
+                      {component.description}
+                    </ListItem>
+                  ))}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/profile" passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  My Profile
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </>
         </NavigationMenuList>
       </NavigationMenu>
     </div>

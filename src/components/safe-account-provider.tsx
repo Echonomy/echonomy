@@ -74,13 +74,17 @@ export function SafeAccountProvider({
     }
 
     const bundlerTransport = http(
-      `https://api.pimlico.io/v2/${pimlicoNetworkNames[network.id]}/rpc?apikey=${
+      `https://api.pimlico.io/v1/${pimlicoNetworkNames[network.id]}/rpc?apikey=${
         env.NEXT_PUBLIC_PIMLICO_API_KEY
       }`,
     );
 
     const paymasterClient = createPimlicoPaymasterClient({
-      transport: bundlerTransport,
+      transport: http(
+        `https://api.pimlico.io/v2/${pimlicoNetworkNames[network.id]}/rpc?apikey=${
+          env.NEXT_PUBLIC_PIMLICO_API_KEY
+        }`,
+      ),
       entryPoint: ENTRYPOINT_ADDRESS_V06,
     });
 
