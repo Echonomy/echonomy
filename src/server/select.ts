@@ -6,6 +6,7 @@ export const selectArtistMeta = {
   bio: true,
   avatar: true,
   verified: true,
+  fanTokenContract: true,
 } as const satisfies Prisma.ArtistSelect;
 
 export const selectSongMeta = {
