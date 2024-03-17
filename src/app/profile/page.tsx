@@ -46,7 +46,7 @@ export default function Page() {
           <div className="flex justify-center">
             <TabsList className="">
               <TabsTrigger value="dash">Collection</TabsTrigger>
-              <TabsTrigger value="upload">Fan Tokens</TabsTrigger>
+              {/* <TabsTrigger value="upload">Fan Tokens</TabsTrigger> */}
             </TabsList>
           </div>
           <div className="px-6">
