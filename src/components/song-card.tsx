@@ -15,7 +15,7 @@ export function SongCard({
   price,
   previewSong,
   id,
-  dontFormat
+  dontFormat,
 }: {
   songName: string;
   artistName: string;
@@ -24,6 +24,7 @@ export function SongCard({
   previewSong?: string;
   id?: number;
   createdAt: Date;
+  dontFormat?: boolean;
 }) {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
@@ -91,7 +92,7 @@ export function SongCard({
             {previewSong && (
               <Button
                 variant="outline"
-                className="h-14 w-14 absolute right-4 top-0 -mt-7 rounded-full p-2 transition-all hover:scale-110 bg-neutral-800"
+                className="absolute right-4 top-0 -mt-7 h-14 w-14 rounded-full bg-neutral-800 p-2 transition-all hover:scale-110"
                 onClick={togglePlay}
               >
                 {isPlaying ? (
