@@ -44,7 +44,7 @@ export const CreateSongForm = () => {
   const safeAccountClient = useSafeAccountClient();
   const publicClient = usePublicClient();
   const [artworkFile, setArtworkFile] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean | null>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -154,7 +154,7 @@ export const CreateSongForm = () => {
 
   const priceParts = fields.price.split('.'); // Split the input into whole and fractional parts
   const wholePart = priceParts[0];
-  const fractionalPart = priceParts[1] || '0';
+  const fractionalPart = priceParts[1] ?? '0';
   const decimals = safeAccountClient?.chain?.nativeCurrency.decimals ?? 18;
 
   // Create a string representing the number in the smallest units, padded with zeros as necessary
@@ -311,7 +311,7 @@ export const CreateSongForm = () => {
               {...{
                 songName: fields.title || "Title",
                 artistName: "Lucid Waves",
-                price: convertedPrice,
+                price: convertedPrice.toString(),
                 createdAt: new Date(),
               }}
             />

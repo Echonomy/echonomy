@@ -17,7 +17,7 @@ export default function Dashboard() {
   const safeAccountClient = useSafeAccountClient();
   const verifyMutation = api.artists.getTheBlueCheckmarkSwag.useMutation();
   const { data: artist } = api.artists.get.useQuery(
-    { walletAddress: safeAccountClient?.account?.address || "" },
+    { walletAddress: safeAccountClient?.account?.address ?? "" },
     { enabled: !!safeAccountClient?.account?.address },
   );
   const utils = api.useUtils();
@@ -67,7 +67,7 @@ export default function Dashboard() {
                   verification_level={VerificationLevel.Device}
                 >
                   {({ open }) => (
-                    <Button onClick={open}>Verify with World ID</Button>
+                    <Button className="mt-5" onClick={open}>Verify with World ID</Button>
                   )}
                 </IDKitWidget>
               ) : (

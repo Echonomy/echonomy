@@ -42,7 +42,7 @@ export const EditProfileForm = () => {
 
   // Get artist data for connected wallet
   const artistData = api.artists.get.useQuery({ walletAddress });
-  const [isLoading, setIsLoading] = useState<boolean | null>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (artistData.data) {
@@ -104,7 +104,7 @@ export const EditProfileForm = () => {
     // Submit the form data and artwork URL to save the metadata for the song
     await updateArtistData.mutateAsync({
       name: fields.name || "Unknown",
-      bio: fields.bio || undefined,
+      bio: fields.bio,
       avatar: fields.avatar || undefined,
     });
   });
