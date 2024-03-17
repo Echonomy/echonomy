@@ -9,6 +9,7 @@ import { useSafeAccountClient } from "~/components/safe-account-provider";
 import { useSearchParams } from "next/navigation";
 import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { api } from "~/utils/trpc";
 import { env } from "~/env";
 
@@ -40,6 +41,8 @@ export default function ArtistDashboardPage() {
     });
     setIsLoading(false);
   };
+
+  console.log({ artist })
 
   const utils = api.useUtils();
 
@@ -92,7 +95,7 @@ export default function ArtistDashboardPage() {
                 </div>
               ) : (
                 <div className="text-center">
-                  <Button className="mt-5" onClick={() => { }} disabled={isLoading}>
+                  <Button className="mt-5" onClick={generateFanToken} disabled={isLoading}>
                     Generate your Fan Token
                   </Button>
                   <div className="text-xs mt-5 text-neutral-500">
