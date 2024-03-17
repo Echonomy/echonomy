@@ -15,6 +15,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.535.0",
     "@aws-sdk/s3-request-presigner": "^3.535.0",
+    "@coinbase/onchainkit": "^0.10.2",
     "@dynamic-labs/ethereum": "^2.0.0-alpha.17",
     "@dynamic-labs/sdk-react-core": "^2.0.0-alpha.17",
     "@dynamic-labs/wagmi-connector": "^2.0.0-alpha.17",
@@ -39,7 +40,11 @@
     "@worldcoin/idkit": "^1.1.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+<<<<<<< Updated upstream
     "cmdk": "^1.0.0",
+=======
+    "frame": "link:@coinbase/onchainkit/frame",
+>>>>>>> Stashed changes
     "json-stringify-deterministic": "^1.0.12",
     "lucide-react": "^0.358.0",
     "nanoid": "^5.0.6",
