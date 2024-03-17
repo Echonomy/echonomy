@@ -19,9 +19,8 @@ import { SongCard } from "./song-card";
 import { useSafeAccountClient } from "./safe-account-provider";
 import { contracts } from "~/contracts";
 import { contractAddress } from "~/consts/contracts";
-import { baseSepolia } from "viem/chains";
 import { usePublicClient } from "wagmi";
-import { decodeEventLog } from "viem";
+import { type SupportedNetworkId } from "~/utils/networks";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -30,9 +29,7 @@ const formSchema = z.object({
   description: z.string().min(2, {
     message: "Description must be at least 2 characters.",
   }),
-  price: z.number().min(0.1, {
-    message: "Price must be at least 0.1 USDC.",
-  }),
+  price: z.string(),
   artwork: z.string(),
   media: z.string(),
 });
@@ -48,7 +45,7 @@ export const CreateSongForm = () => {
     defaultValues: {
       title: "Title",
       description: "",
-      price: 0,
+      price: "0",
       artwork: "",
       media: "",
     },
@@ -106,7 +103,7 @@ export const CreateSongForm = () => {
 
   const handleDropMusic = async (acceptedFiles: FileList | null) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
-      const allowedTypes = [{ name: "mp3", types: ["audio/mp3"] }];
+      const allowedTypes = [{ name: "mp3", types: ["audio/mpeg"] }];
       const fileType = allowedTypes.find((allowedType) =>
         allowedType.types.find((type) => type === acceptedFiles?.[0]?.type),
       );
@@ -145,38 +142,33 @@ export const CreateSongForm = () => {
   };
 
   const handleFormSubmit = form.handleSubmit(async (formValues) => {
-    if (!safeAccountClient?.account) return;
+    if (!safeAccountClient?.account || !safeAccountClient.chain) return;
 
-    const hash = await safeAccountClient?.writeContract({
+    await safeAccountClient?.writeContract({
       account: safeAccountClient.account,
       abi: contracts.EchonomySongRegistry,
-      address: contractAddress[baseSepolia.id].EchonomySongRegistry,
+      address:
+        contractAddress[safeAccountClient.chain.id as SupportedNetworkId]
+          .EchonomySongRegistry,
       functionName: "createSongContract",
-      chain: baseSepolia,
+      chain: safeAccountClient.chain,
       args: [
         fields.title,
-        (BigInt(fields.price * 100) *
-          1n ** BigInt(baseSepolia.nativeCurrency.decimals)) /
+        (BigInt(Number(fields.price) * 100) *
+          1n ** BigInt(safeAccountClient.chain.nativeCurrency.decimals)) /
           100n,
       ],
     });
 
-    const songId = await publicClient
-      ?.getTransactionReceipt({
-        hash,
-      })
-      .then(
-        (res) =>
-          res.logs.map(({ data, topics }) =>
-            decodeEventLog({
-              abi: contracts.EchonomySongRegistry,
-              data,
-              topics,
-            }),
-          )[0]?.args?.songId,
-      );
+    const songId = await publicClient?.readContract({
+      abi: contracts.EchonomySongRegistry,
+      address:
+        contractAddress[safeAccountClient.chain.id as SupportedNetworkId]
+          .EchonomySongRegistry,
+      functionName: "songCount",
+    });
 
-    if (!songId) return;
+    if (!songId) throw new Error("Failed to create song contract");
 
     // Submit the form data and artwork URL to save the metadata for the song
     await registerSongMutation.mutateAsync({
@@ -272,7 +264,7 @@ export const CreateSongForm = () => {
                     <Dropzone
                       {...field}
                       dropMessage="Drop files or click here"
-                      handleOnDrop={handleDropArtwork}
+                      handleOnDrop={handleDropMusic}
                     />
                   </FormControl>
                   <FormDescription>
@@ -298,7 +290,7 @@ export const CreateSongForm = () => {
                 songName: fields.title || "Title",
                 artistName: "Lucid Waves",
                 price: String(fields.price),
-                createdAt: "April 1, 2023",
+                createdAt: new Date(),
               }}
             />
           </div>
