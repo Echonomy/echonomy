@@ -11,6 +11,7 @@ type Paths<T> = T extends object
 export const signatureProtectedMethods: string[] = [
   "artists.update",
   "songs.register",
+  "songs.decryptionKey",
 ] satisfies Exclude<
   Paths<AppRouter["_def"]["procedures"]>,
   `${string}._def${string}`

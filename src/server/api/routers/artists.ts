@@ -53,7 +53,8 @@ export const artistsRouter = createTRPCRouter({
         },
         create: {
           walletAddress: ctx.walletAddress,
-          name: input.name,
+          name: input.name ?? "Unknown",
+          ...input,
         },
         update: input,
       });
