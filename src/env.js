@@ -80,6 +80,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CHILIZ_SPICY_RPC_URL,
     NEXT_PUBLIC_WLD_APP_ID: process.env.NEXT_PUBLIC_WLD_APP_ID,
     NEXT_PUBLIC_WLD_ACTION_ID: process.env.NEXT_PUBLIC_WLD_ACTION_ID,
+    NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC_URL:
+      process.env.NEXT_PUBLIC_ARBITRUM_SEPOLIA_RPC_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
