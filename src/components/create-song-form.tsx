@@ -79,7 +79,10 @@ export const CreateSongForm = () => {
         });
       } else {
         const artworkFile = acceptedFiles?.[0];
-        if (!artworkFile) { setIsLoading(false); return; }
+        if (!artworkFile) {
+          setIsLoading(false);
+          return;
+        }
         const albumCover = URL.createObjectURL(artworkFile); // Convert the File object to a data URL
         setArtworkFile(albumCover);
 
@@ -152,13 +155,15 @@ export const CreateSongForm = () => {
     }
   };
 
-  const priceParts = fields.price.split('.'); // Split the input into whole and fractional parts
+  const priceParts = fields.price.split("."); // Split the input into whole and fractional parts
   const wholePart = priceParts[0];
-  const fractionalPart = priceParts[1] ?? '0';
+  const fractionalPart = priceParts[1] ?? "0";
   const decimals = safeAccountClient?.chain?.nativeCurrency.decimals ?? 18;
 
   // Create a string representing the number in the smallest units, padded with zeros as necessary
-  const paddedFraction = fractionalPart.padEnd(decimals ?? 0, '0').substring(0, decimals);
+  const paddedFraction = fractionalPart
+    .padEnd(decimals ?? 0, "0")
+    .substring(0, decimals);
   const combinedPrice = wholePart + paddedFraction; // Combine whole and fractional parts
   const convertedPrice = BigInt(combinedPrice); // Convert to BigInt
 
@@ -171,11 +176,7 @@ export const CreateSongForm = () => {
       address: contractAddress[baseSepolia.id].EchonomySongRegistry,
       functionName: "createSongContract",
       chain: safeAccountClient.chain,
-      args: [
-        (BigInt(Number(fields.price) * 100) *
-          (10n ** BigInt(safeAccountClient.chain.nativeCurrency.decimals))) /
-        100n,
-      ],
+      args: [BigInt(Number(fields.price) * 6 ** 10)],
     });
 
     const songId = await publicClient?.readContract({
@@ -241,7 +242,12 @@ export const CreateSongForm = () => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.1" placeholder="Enter price" {...field} />
+                    <Input
+                      type="number"
+                      step="0.1"
+                      placeholder="Enter price"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Enter the price you want users to pay for this tune in USDC.
@@ -257,13 +263,17 @@ export const CreateSongForm = () => {
                   <FormLabel>Artwork</FormLabel>
                   <FormControl>
                     {/* <Input type="file" {...field} /> */}
-                    {
-                      artworkFile ? <div className="text-green-300">Successfully Uploaded.</div> : <Dropzone
+                    {artworkFile ? (
+                      <div className="text-green-300">
+                        Successfully Uploaded.
+                      </div>
+                    ) : (
+                      <Dropzone
                         {...field}
                         dropMessage="Drop files or click here"
                         handleOnDrop={handleDropArtwork}
                       />
-                    }
+                    )}
                   </FormControl>
                   <FormDescription>
                     Upload your tune&apos;s artwork in an image file format.
@@ -279,14 +289,17 @@ export const CreateSongForm = () => {
                   <FormLabel>Tune File</FormLabel>
                   <FormControl>
                     {/* <Input type="file" {...field} /> */}
-                    {
-                      fields.media ? <div className="text-green-300">Successfully Uploaded.</div> :
-                        <Dropzone
-                          {...field}
-                          dropMessage="Drop files or click here"
-                          handleOnDrop={handleDropMusic}
-                        />
-                    }
+                    {fields.media ? (
+                      <div className="text-green-300">
+                        Successfully Uploaded.
+                      </div>
+                    ) : (
+                      <Dropzone
+                        {...field}
+                        dropMessage="Drop files or click here"
+                        handleOnDrop={handleDropMusic}
+                      />
+                    )}
                   </FormControl>
                   <FormDescription>
                     Upload your tune&apos;s mp3 / wav file.
@@ -295,7 +308,9 @@ export const CreateSongForm = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading}>Upload</Button>
+            <Button type="submit" disabled={isLoading}>
+              Upload
+            </Button>
             <br />
           </div>
           <div>
